@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BudgetState {
 
- double get amount; Currency get currency; bool get isSet;
+ double get amount; Currency get currency; bool get isSet; int get month; int get year; String? get id;
 /// Create a copy of BudgetState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $BudgetStateCopyWith<BudgetState> get copyWith => _$BudgetStateCopyWithImpl<Budg
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BudgetState&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.isSet, isSet) || other.isSet == isSet));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BudgetState&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.isSet, isSet) || other.isSet == isSet)&&(identical(other.month, month) || other.month == month)&&(identical(other.year, year) || other.year == year)&&(identical(other.id, id) || other.id == id));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,amount,currency,isSet);
+int get hashCode => Object.hash(runtimeType,amount,currency,isSet,month,year,id);
 
 @override
 String toString() {
-  return 'BudgetState(amount: $amount, currency: $currency, isSet: $isSet)';
+  return 'BudgetState(amount: $amount, currency: $currency, isSet: $isSet, month: $month, year: $year, id: $id)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $BudgetStateCopyWith<$Res>  {
   factory $BudgetStateCopyWith(BudgetState value, $Res Function(BudgetState) _then) = _$BudgetStateCopyWithImpl;
 @useResult
 $Res call({
- double amount, Currency currency, bool isSet
+ double amount, Currency currency, bool isSet, int month, int year, String? id
 });
 
 
@@ -66,12 +66,15 @@ class _$BudgetStateCopyWithImpl<$Res>
 
 /// Create a copy of BudgetState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? amount = null,Object? currency = null,Object? isSet = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? amount = null,Object? currency = null,Object? isSet = null,Object? month = null,Object? year = null,Object? id = freezed,}) {
   return _then(_self.copyWith(
 amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
 as double,currency: null == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
 as Currency,isSet: null == isSet ? _self.isSet : isSet // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,month: null == month ? _self.month : month // ignore: cast_nullable_to_non_nullable
+as int,year: null == year ? _self.year : year // ignore: cast_nullable_to_non_nullable
+as int,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -82,12 +85,15 @@ as bool,
 @JsonSerializable()
 
 class _BudgetState implements BudgetState {
-  const _BudgetState({required this.amount, required this.currency, this.isSet = false});
+  const _BudgetState({required this.amount, required this.currency, this.isSet = false, required this.month, required this.year, required this.id});
   factory _BudgetState.fromJson(Map<String, dynamic> json) => _$BudgetStateFromJson(json);
 
 @override final  double amount;
 @override final  Currency currency;
 @override@JsonKey() final  bool isSet;
+@override final  int month;
+@override final  int year;
+@override final  String? id;
 
 /// Create a copy of BudgetState
 /// with the given fields replaced by the non-null parameter values.
@@ -102,16 +108,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BudgetState&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.isSet, isSet) || other.isSet == isSet));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BudgetState&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.isSet, isSet) || other.isSet == isSet)&&(identical(other.month, month) || other.month == month)&&(identical(other.year, year) || other.year == year)&&(identical(other.id, id) || other.id == id));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,amount,currency,isSet);
+int get hashCode => Object.hash(runtimeType,amount,currency,isSet,month,year,id);
 
 @override
 String toString() {
-  return 'BudgetState(amount: $amount, currency: $currency, isSet: $isSet)';
+  return 'BudgetState(amount: $amount, currency: $currency, isSet: $isSet, month: $month, year: $year, id: $id)';
 }
 
 
@@ -122,7 +128,7 @@ abstract mixin class _$BudgetStateCopyWith<$Res> implements $BudgetStateCopyWith
   factory _$BudgetStateCopyWith(_BudgetState value, $Res Function(_BudgetState) _then) = __$BudgetStateCopyWithImpl;
 @override @useResult
 $Res call({
- double amount, Currency currency, bool isSet
+ double amount, Currency currency, bool isSet, int month, int year, String? id
 });
 
 
@@ -139,12 +145,15 @@ class __$BudgetStateCopyWithImpl<$Res>
 
 /// Create a copy of BudgetState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? amount = null,Object? currency = null,Object? isSet = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? amount = null,Object? currency = null,Object? isSet = null,Object? month = null,Object? year = null,Object? id = freezed,}) {
   return _then(_BudgetState(
 amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
 as double,currency: null == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
 as Currency,isSet: null == isSet ? _self.isSet : isSet // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,month: null == month ? _self.month : month // ignore: cast_nullable_to_non_nullable
+as int,year: null == year ? _self.year : year // ignore: cast_nullable_to_non_nullable
+as int,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

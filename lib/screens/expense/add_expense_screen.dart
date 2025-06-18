@@ -4,6 +4,7 @@ import 'package:expense_tracker/app.dart';
 import 'package:expense_tracker/services/expense_service.dart';
 import 'package:expense_tracker/domain/expense_state.dart';
 import 'package:expense_tracker/domain/currency.dart';
+import 'package:intl/intl.dart';
 
 class AddExpenseScreen extends ConsumerStatefulWidget {
   final ExpenseState? expense;
@@ -25,6 +26,7 @@ class _AddExpenseScreenState
   final _descriptionCtrl = TextEditingController();
   Category? _selectedCategory;
   Currency _selectedCurrency = Currency.PLN;
+  late DateTime _selectedDate;
 
   @override
   void initState() {
@@ -39,8 +41,24 @@ class _AddExpenseScreenState
           widget.expense!.description;
       _selectedCategory = widget.expense!.category;
       _selectedCurrency = widget.expense!.currency;
+      _selectedDate = widget.expense!.date;
     } else {
       _type = TransactionType.expense;
+      _selectedDate = DateTime.now();
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
     }
   }
 
@@ -72,6 +90,7 @@ class _AddExpenseScreenState
             newDescription: desc,
             newCategory: _selectedCategory!,
             newType: _type,
+            newDate: _selectedDate,
           );
     } else {
       await ref
@@ -83,6 +102,7 @@ class _AddExpenseScreenState
             description: desc,
             category: _selectedCategory!,
             type: _type,
+            date: _selectedDate,
           );
     }
 
@@ -161,6 +181,19 @@ class _AddExpenseScreenState
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                title: const Text('Data transakcji'),
+                subtitle: Text(
+                  DateFormat.yMMMMd().format(
+                    _selectedDate,
+                  ),
+                ),
+                trailing: const Icon(
+                  Icons.calendar_today,
+                ),
+                onTap: () => _selectDate(context),
               ),
               const SizedBox(height: 16),
               TextFormField(

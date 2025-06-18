@@ -10,6 +10,9 @@ abstract class BudgetState with _$BudgetState {
     required double amount,
     required Currency currency,
     @Default(false) bool isSet,
+    required int month,
+    required int year,
+    required String? id, // Dodane ID dokumentu
   }) = _BudgetState;
 
   factory BudgetState.fromJson(

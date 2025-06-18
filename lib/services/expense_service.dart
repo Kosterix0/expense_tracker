@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:expense_tracker/domain/expense_state.dart';
 import 'package:expense_tracker/domain/currency.dart';
 import 'package:expense_tracker/services/currency_service.dart';
-import 'package:expense_tracker/domain/budget_state.dart'; // DODAJ TEN IMPORT
+import 'package:expense_tracker/domain/budget_state.dart';
 
 class ExpenseNotifier
     extends StateNotifier<List<ExpenseState>> {
@@ -56,21 +56,34 @@ class ExpenseNotifier
             .collection('users')
             .doc(userId)
             .get();
+
     if (doc.exists) {
       final data = doc.data()!;
       return BudgetState(
-        amount: data['budget'] ?? 0.0,
+        amount: data['budget'] as double? ?? 0.0,
         currency: Currency.values.firstWhere(
-          (c) => c.code == (data['currency'] ?? 'PLN'),
+          (c) =>
+              c.code ==
+              (data['currency'] as String? ?? 'PLN'),
           orElse: () => Currency.PLN,
         ),
         isSet: true,
+        month:
+            data['month'] as int? ??
+            DateTime.now().month,
+        year:
+            data['year'] as int? ?? DateTime.now().year,
+        id: doc.id,
       );
     }
+
     return BudgetState(
       amount: 0.0,
       currency: Currency.PLN,
       isSet: false,
+      month: DateTime.now().month,
+      year: DateTime.now().year,
+      id: null,
     );
   }
 
@@ -112,6 +125,7 @@ class ExpenseNotifier
     required String description,
     required Category category,
     required TransactionType type,
+    required DateTime date,
   }) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -127,7 +141,6 @@ class ExpenseNotifier
           budget.currency.code,
         );
       } catch (e) {
-        // W przypadku błędu konwersji używamy oryginalnej kwoty
         baseAmount = amount;
       }
     }
@@ -143,7 +156,7 @@ class ExpenseNotifier
           'baseAmount': baseAmount,
           'description': description,
           'category': category.name,
-          'date': FieldValue.serverTimestamp(),
+          'date': Timestamp.fromDate(date),
           'type': type.name,
         });
   }
@@ -156,6 +169,7 @@ class ExpenseNotifier
     required String newDescription,
     required Category newCategory,
     required TransactionType newType,
+    required DateTime newDate,
   }) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -188,6 +202,7 @@ class ExpenseNotifier
           'description': newDescription,
           'category': newCategory.name,
           'type': newType.name,
+          'date': Timestamp.fromDate(newDate),
         });
   }
 
