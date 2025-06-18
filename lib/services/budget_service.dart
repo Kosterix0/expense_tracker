@@ -88,6 +88,11 @@ class BudgetNotifier extends StateNotifier<BudgetState> {
         });
   }
 
+  Future<BudgetState?> getCurrentBudget() async {
+    final now = DateTime.now();
+    return getBudgetForMonth(now.month, now.year);
+  }
+
   Future<void> setBudget(
     double amount,
     Currency currency,

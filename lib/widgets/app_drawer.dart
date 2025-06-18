@@ -5,6 +5,7 @@ import 'package:expense_tracker/screens/dashboard/dashboard_screen.dart';
 import 'package:expense_tracker/screens/transactionHistory/transaction_history_screen.dart';
 import 'package:expense_tracker/auth/screens/login_screen.dart';
 import 'package:expense_tracker/screens/settings/settings_screen.dart';
+import 'package:expense_tracker/screens/export/export_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   final User user;
@@ -85,6 +86,19 @@ class AppDrawer extends StatelessWidget {
                     builder: (_) => SignInScreen(),
                   ),
                   (route) => false,
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.import_export),
+              title: const Text('Eksport danych'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ExportScreen(),
+                  ),
                 );
               },
             ),
