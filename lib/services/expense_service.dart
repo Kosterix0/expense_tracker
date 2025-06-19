@@ -197,7 +197,7 @@ class ExpenseNotifier
 
     if (budgetQuery.docs.isNotEmpty) {
       final doc = budgetQuery.docs.first;
-      final data = doc.data() as Map<String, dynamic>;
+      final data = doc.data();
       return BudgetState(
         amount: data['amount'] as double,
         currency: Currency.values.firstWhere(

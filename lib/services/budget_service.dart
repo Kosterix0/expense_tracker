@@ -61,8 +61,7 @@ class BudgetNotifier extends StateNotifier<BudgetState> {
         .listen((snapshot) {
           if (snapshot.docs.isNotEmpty) {
             final doc = snapshot.docs.first;
-            final data =
-                doc.data() as Map<String, dynamic>;
+            final data = doc.data();
 
             state = BudgetState(
               amount: data['amount'] as double,
@@ -155,7 +154,7 @@ class BudgetNotifier extends StateNotifier<BudgetState> {
 
     if (budgetQuery.docs.isNotEmpty) {
       final doc = budgetQuery.docs.first;
-      final data = doc.data() as Map<String, dynamic>;
+      final data = doc.data();
       return BudgetState(
         amount: data['amount'] as double,
         currency: Currency.values.firstWhere(

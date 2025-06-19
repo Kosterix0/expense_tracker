@@ -10,9 +10,9 @@ class ExpenseDetailScreen extends ConsumerWidget {
   final ExpenseState expense;
 
   const ExpenseDetailScreen({
-    Key? key,
+    super.key,
     required this.expense,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

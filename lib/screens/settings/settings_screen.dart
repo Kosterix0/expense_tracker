@@ -6,7 +6,7 @@ import 'package:expense_tracker/domain/currency.dart';
 import 'package:expense_tracker/domain/budget_state.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   ConsumerState<SettingsScreen> createState() =>

@@ -9,12 +9,11 @@ import 'package:expense_tracker/screens/export/export_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   final User user;
-  const AppDrawer({Key? key, required this.user})
-    : super(key: key);
+  const AppDrawer({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
-    final _auth = GoogleAuthService();
+    final auth = GoogleAuthService();
     return Drawer(
       backgroundColor: Colors.grey[900],
       child: SafeArea(
@@ -146,7 +145,7 @@ class AppDrawer extends StatelessWidget {
                     ),
                     onTap: () async {
                       try {
-                        await _auth.signOut();
+                        await auth.signOut();
                         Navigator.of(
                           context,
                         ).pushAndRemoveUntil(

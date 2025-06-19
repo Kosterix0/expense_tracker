@@ -274,7 +274,7 @@ class ExportService {
       'Currency',
       'Description',
     ]);
-    filteredTransactions.forEach((t) {
+    for (var t in filteredTransactions) {
       csvData.add([
         DateFormat('dd.MM.yyyy').format(t.date),
         t.type == TransactionType.expense
@@ -286,7 +286,7 @@ class ExportService {
         t.currency.code,
         t.description,
       ]);
-    });
+    }
 
     return const ListToCsvConverter().convert(csvData);
   }

@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:expense_tracker/services/budget_service.dart';
 
 class ExportScreen extends ConsumerStatefulWidget {
-  const ExportScreen({Key? key}) : super(key: key);
+  const ExportScreen({super.key});
 
   @override
   ConsumerState<ExportScreen> createState() =>

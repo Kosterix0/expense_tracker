@@ -12,7 +12,7 @@ import 'package:expense_tracker/domain/currency.dart';
 import 'package:expense_tracker/screens/settings/settings_screen.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
-  const DashboardScreen({Key? key}) : super(key: key);
+  const DashboardScreen({super.key});
 
   @override
   ConsumerState<DashboardScreen> createState() =>

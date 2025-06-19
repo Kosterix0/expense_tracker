@@ -9,8 +9,7 @@ import 'package:intl/intl.dart';
 class AddExpenseScreen extends ConsumerStatefulWidget {
   final ExpenseState? expense;
 
-  const AddExpenseScreen({Key? key, this.expense})
-    : super(key: key);
+  const AddExpenseScreen({super.key, this.expense});
 
   @override
   ConsumerState<AddExpenseScreen> createState() =>

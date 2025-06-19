@@ -14,12 +14,12 @@ class AppScaffold extends ConsumerWidget {
   final Widget? floatingActionButton;
 
   const AppScaffold({
-    Key? key,
+    super.key,
     required this.body,
     required this.title,
     this.bottomTabBar,
     this.floatingActionButton,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

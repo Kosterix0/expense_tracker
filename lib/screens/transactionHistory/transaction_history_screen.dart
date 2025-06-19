@@ -9,8 +9,7 @@ import 'package:expense_tracker/domain/currency.dart';
 
 class TransactionHistoryScreen
     extends ConsumerStatefulWidget {
-  const TransactionHistoryScreen({Key? key})
-    : super(key: key);
+  const TransactionHistoryScreen({super.key});
 
   @override
   ConsumerState<TransactionHistoryScreen>
