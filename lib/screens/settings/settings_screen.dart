@@ -1,4 +1,3 @@
-// settings_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:expense_tracker/services/budget_service.dart';

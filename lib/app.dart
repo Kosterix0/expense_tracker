@@ -23,12 +23,11 @@ class AppScaffold extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = FirebaseAuth.instance.currentUser!;
-    final transactions = ref.watch(transactionProvider);
-    final budget = ref.watch(budgetProvider);
+    final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      drawer: AppDrawer(user: user),
+      drawer:
+          user != null ? AppDrawer(user: user) : null,
       appBar: AppBar(
         title: Text(title),
         bottom: bottomTabBar,

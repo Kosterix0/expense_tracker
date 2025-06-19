@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:expense_tracker/domain/expense_state.dart';
 import 'package:expense_tracker/domain/currency.dart';
 import 'package:expense_tracker/services/currency_service.dart';
+import 'package:expense_tracker/services/budget_service.dart';
 import 'package:expense_tracker/domain/budget_state.dart';
 
 class ExpenseNotifier
@@ -28,8 +29,6 @@ class ExpenseNotifier
     state = [];
 
     if (user != null) {
-      final budget = await _getUserBudget(user.uid);
-
       _expensesSubscription = _firestore
           .collection('users')
           .doc(user.uid)
@@ -39,8 +38,7 @@ class ExpenseNotifier
           .listen((qs) async {
             final transactions = await Future.wait(
               qs.docs.map(
-                (doc) async =>
-                    await _mapDocument(doc, budget),
+                (doc) async => await _mapDocument(doc),
               ),
             );
             state = transactions;
@@ -48,48 +46,8 @@ class ExpenseNotifier
     }
   }
 
-  Future<BudgetState> _getUserBudget(
-    String userId,
-  ) async {
-    final doc =
-        await _firestore
-            .collection('users')
-            .doc(userId)
-            .get();
-
-    if (doc.exists) {
-      final data = doc.data()!;
-      return BudgetState(
-        amount: data['budget'] as double? ?? 0.0,
-        currency: Currency.values.firstWhere(
-          (c) =>
-              c.code ==
-              (data['currency'] as String? ?? 'PLN'),
-          orElse: () => Currency.PLN,
-        ),
-        isSet: true,
-        month:
-            data['month'] as int? ??
-            DateTime.now().month,
-        year:
-            data['year'] as int? ?? DateTime.now().year,
-        id: doc.id,
-      );
-    }
-
-    return BudgetState(
-      amount: 0.0,
-      currency: Currency.PLN,
-      isSet: false,
-      month: DateTime.now().month,
-      year: DateTime.now().year,
-      id: null,
-    );
-  }
-
   Future<ExpenseState> _mapDocument(
     DocumentSnapshot doc,
-    BudgetState budget,
   ) async {
     final data = doc.data() as Map<String, dynamic>;
 
@@ -130,15 +88,23 @@ class ExpenseNotifier
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    final budget = await _getUserBudget(user.uid);
-    double baseAmount = amount;
+    final budget = await _getBudgetForTransactionDate(
+      date,
+    );
 
-    if (currency != budget.currency) {
+    double baseAmount = amount;
+    Currency targetCurrency = Currency.PLN;
+
+    if (budget != null) {
+      targetCurrency = budget.currency;
+    }
+
+    if (currency != targetCurrency) {
       try {
         baseAmount = await _currencyService.convert(
           amount,
           currency.code,
-          budget.currency.code,
+          targetCurrency.code,
         );
       } catch (e) {
         baseAmount = amount;
@@ -174,15 +140,23 @@ class ExpenseNotifier
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    final budget = await _getUserBudget(user.uid);
-    double baseAmount = newAmount;
+    final budget = await _getBudgetForTransactionDate(
+      newDate,
+    );
 
-    if (newCurrency != budget.currency) {
+    double baseAmount = newAmount;
+    Currency targetCurrency = Currency.PLN;
+
+    if (budget != null) {
+      targetCurrency = budget.currency;
+    }
+
+    if (newCurrency != targetCurrency) {
       try {
         baseAmount = await _currencyService.convert(
           newAmount,
           newCurrency.code,
-          budget.currency.code,
+          targetCurrency.code,
         );
       } catch (e) {
         baseAmount = newAmount;
@@ -204,6 +178,40 @@ class ExpenseNotifier
           'type': newType.name,
           'date': Timestamp.fromDate(newDate),
         });
+  }
+
+  Future<BudgetState?> _getBudgetForTransactionDate(
+    DateTime date,
+  ) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return null;
+
+    final budgetQuery =
+        await _firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('budgets')
+            .where('month', isEqualTo: date.month)
+            .where('year', isEqualTo: date.year)
+            .get();
+
+    if (budgetQuery.docs.isNotEmpty) {
+      final doc = budgetQuery.docs.first;
+      final data = doc.data() as Map<String, dynamic>;
+      return BudgetState(
+        amount: data['amount'] as double,
+        currency: Currency.values.firstWhere(
+          (c) => c.code == data['currency'],
+          orElse: () => Currency.PLN,
+        ),
+        isSet: true,
+        month: data['month'] as int,
+        year: data['year'] as int,
+        id: doc.id,
+      );
+    }
+
+    return null;
   }
 
   Future<void> deleteExpense(String id) async {

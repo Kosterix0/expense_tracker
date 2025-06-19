@@ -27,7 +27,6 @@ class AppDrawer extends StatelessWidget {
               ),
               padding: const EdgeInsets.only(left: 16),
               alignment: Alignment.centerLeft,
-
               child: Text(
                 'Menu',
                 style: TextStyle(
@@ -146,18 +145,45 @@ class AppDrawer extends StatelessWidget {
                       ),
                     ),
                     onTap: () async {
-                      await _auth.signOut();
-                      Navigator.of(
-                        context,
-                      ).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                          builder: (_) => SignInScreen(),
-                        ),
-                        (route) => false,
-                      );
+                      try {
+                        await _auth.signOut();
+                        Navigator.of(
+                          context,
+                        ).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder:
+                                (_) => SignInScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Logout failed: ${e.toString()}',
+                              ),
+                              backgroundColor:
+                                  Colors.red,
+                            ),
+                          );
+                        }
+                      }
                     },
                   ),
                 ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Logged in as: ${user.email ?? 'Unknown'}',
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 12,
+                ),
               ),
             ),
           ],

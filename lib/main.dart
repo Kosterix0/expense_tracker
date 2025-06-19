@@ -4,21 +4,13 @@ import 'package:expense_tracker/firebase_options.dart';
 import 'package:expense_tracker/auth/screens/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:expense_tracker/screens/dashboard/dashboard_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  FirebaseAuth.instance.authStateChanges().listen((
-    user,
-  ) {
-    if (user == null) {
-      final container = ProviderContainer();
-      container.dispose();
-    }
-  });
 
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -54,7 +46,15 @@ class MyApp extends StatelessWidget {
               backgroundColor: Colors.green[600],
             ),
       ),
-      home: SignInScreen(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return const DashboardScreen();
+          }
+          return SignInScreen();
+        },
+      ),
     );
   }
 }

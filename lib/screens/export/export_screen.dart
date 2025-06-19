@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:expense_tracker/services/export_service.dart';
+import 'package:expense_tracker/services/export_service.dart'; // Dodaj ten import
 import 'package:expense_tracker/services/expense_service.dart';
 import 'package:expense_tracker/app.dart';
 import 'package:intl/intl.dart';
@@ -154,7 +154,7 @@ class _ExportScreenState
             ),
             const SizedBox(height: 32),
             const Text(
-              'WSelect export format:',
+              'Select export format:',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
