@@ -4,7 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class GoogleAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId:
+        '258703844149-lne4dqmqbts9uf0e70jjedo8455i22mu.apps.googleusercontent.com',
+    scopes: ['email', 'profile'],
+  );
   final FirebaseFirestore _firestore =
       FirebaseFirestore.instance;
 

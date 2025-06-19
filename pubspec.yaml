@@ -23,6 +23,7 @@ dependencies:
   path_provider: ^2.0.15
   open_file: ^3.5.10
   csv: ^5.0.0
+  google_sign_in_web: ^0.10.0
 
 dev_dependencies:
   flutter_test:
