@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:csv/csv.dart';
@@ -8,9 +9,12 @@ import 'package:expense_tracker/domain/expense_state.dart';
 import 'package:expense_tracker/domain/budget_state.dart';
 import 'package:expense_tracker/domain/currency.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:universal_html/html.dart'
+    show Blob, Url, AnchorElement;
 
 class ExportService {
-  static Future<File> generatePdf({
+  static Future<Uint8List> _generatePdfBytes({
     required List<ExpenseState> transactions,
     required DateTime startDate,
     required DateTime endDate,
@@ -32,7 +36,6 @@ class ExportService {
                   ),
             )
             .toList();
-    ;
 
     final expenses =
         filteredTransactions
@@ -167,15 +170,10 @@ class ExportService {
       ),
     );
 
-    final output = await getTemporaryDirectory();
-    final file = File(
-      '${output.path}/financial_report.pdf',
-    );
-    await file.writeAsBytes(await pdf.save());
-    return file;
+    return await pdf.save();
   }
 
-  static Future<File> generateCsv({
+  static Future<String> _generateCsvString({
     required List<ExpenseState> transactions,
     required DateTime startDate,
     required DateTime endDate,
@@ -290,14 +288,126 @@ class ExportService {
       ]);
     });
 
-    final output = await getTemporaryDirectory();
-    final file = File(
-      '${output.path}/financial_report.csv',
+    return const ListToCsvConverter().convert(csvData);
+  }
+
+  static Future<File> generatePdf({
+    required List<ExpenseState> transactions,
+    required DateTime startDate,
+    required DateTime endDate,
+    required BudgetState? budget,
+  }) async {
+    final bytes = await _generatePdfBytes(
+      transactions: transactions,
+      startDate: startDate,
+      endDate: endDate,
+      budget: budget,
     );
-    await file.writeAsString(
-      const ListToCsvConverter().convert(csvData),
+
+    if (kIsWeb) {
+      return File.fromRawPath(bytes);
+    } else {
+      final output = await getTemporaryDirectory();
+      final file = File(
+        '${output.path}/financial_report.pdf',
+      );
+      await file.writeAsBytes(bytes);
+      return file;
+    }
+  }
+
+  static Future<File> generateCsv({
+    required List<ExpenseState> transactions,
+    required DateTime startDate,
+    required DateTime endDate,
+    required BudgetState? budget,
+  }) async {
+    final csvString = await _generateCsvString(
+      transactions: transactions,
+      startDate: startDate,
+      endDate: endDate,
+      budget: budget,
     );
-    return file;
+
+    if (kIsWeb) {
+      return File.fromRawPath(
+        Uint8List.fromList(csvString.codeUnits),
+      );
+    } else {
+      final output = await getTemporaryDirectory();
+      final file = File(
+        '${output.path}/financial_report.csv',
+      );
+      await file.writeAsString(csvString);
+      return file;
+    }
+  }
+
+  static Future<void> exportData({
+    required String format,
+    required List<ExpenseState> transactions,
+    required DateTime startDate,
+    required DateTime endDate,
+    required BudgetState? budget,
+  }) async {
+    try {
+      if (kIsWeb) {
+        if (format == 'pdf') {
+          final bytes = await _generatePdfBytes(
+            transactions: transactions,
+            startDate: startDate,
+            endDate: endDate,
+            budget: budget,
+          );
+          _downloadFileWeb(
+            bytes,
+            'financial_report.pdf',
+          );
+        } else {
+          final csvString = await _generateCsvString(
+            transactions: transactions,
+            startDate: startDate,
+            endDate: endDate,
+            budget: budget,
+          );
+          _downloadFileWeb(
+            Uint8List.fromList(csvString.codeUnits),
+            'financial_report.csv',
+          );
+        }
+      } else {
+        final file =
+            format == 'pdf'
+                ? await generatePdf(
+                  transactions: transactions,
+                  startDate: startDate,
+                  endDate: endDate,
+                  budget: budget,
+                )
+                : await generateCsv(
+                  transactions: transactions,
+                  startDate: startDate,
+                  endDate: endDate,
+                  budget: budget,
+                );
+        await openFile(file);
+      }
+    } catch (e) {
+      throw Exception('Export failed: $e');
+    }
+  }
+
+  static void _downloadFileWeb(
+    Uint8List bytes,
+    String fileName,
+  ) {
+    final blob = Blob([bytes]);
+    final url = Url.createObjectUrlFromBlob(blob);
+    final anchor =
+        AnchorElement(href: url)
+          ..setAttribute('download', fileName)
+          ..click();
+    Url.revokeObjectUrl(url);
   }
 
   static Map<Category, double> _groupByCategory(
@@ -312,6 +422,8 @@ class ExportService {
   }
 
   static Future<void> openFile(File file) async {
-    await OpenFile.open(file.path);
+    if (!kIsWeb) {
+      await OpenFile.open(file.path);
+    }
   }
 }

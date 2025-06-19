@@ -70,22 +70,14 @@ class _ExportScreenState
             DateTime.now().year,
           );
 
-      final file =
-          format == 'pdf'
-              ? await ExportService.generatePdf(
-                transactions: transactions,
-                startDate: _startDate,
-                endDate: _endDate,
-                budget: budget,
-              )
-              : await ExportService.generateCsv(
-                transactions: transactions,
-                startDate: _startDate,
-                endDate: _endDate,
-                budget: budget,
-              );
+      await ExportService.exportData(
+        format: format,
+        transactions: transactions,
+        startDate: _startDate,
+        endDate: _endDate,
+        budget: budget,
+      );
 
-      await ExportService.openFile(file);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
