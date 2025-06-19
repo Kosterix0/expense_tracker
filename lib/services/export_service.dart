@@ -18,7 +18,6 @@ class ExportService {
   }) async {
     final pdf = pw.Document();
 
-    // Filtruj transakcje dla wybranego zakresu dat
     final filteredTransactions =
         transactions
             .where(
@@ -33,6 +32,7 @@ class ExportService {
                   ),
             )
             .toList();
+    ;
 
     final expenses =
         filteredTransactions
@@ -56,7 +56,6 @@ class ExportService {
       (sum, t) => sum + t.baseAmount,
     );
 
-    // Grupuj transakcje według kategorii
     final expenseByCategory = _groupByCategory(expenses);
     final incomeByCategory = _groupByCategory(incomes);
 
@@ -67,33 +66,33 @@ class ExportService {
               pw.Header(
                 level: 0,
                 child: pw.Text(
-                  'Raport finansowy',
+                  'Financial Report',
                   style: pw.TextStyle(fontSize: 24),
                 ),
               ),
               pw.Text(
-                'Okres: ${DateFormat('dd.MM.yyyy').format(startDate)} - ${DateFormat('dd.MM.yyyy').format(endDate)}',
+                'Period: ${DateFormat('dd.MM.yyyy').format(startDate)} - ${DateFormat('dd.MM.yyyy').format(endDate)}',
               ),
               pw.SizedBox(height: 20),
               pw.Header(
                 level: 1,
-                child: pw.Text('Podsumowanie'),
+                child: pw.Text('Summary'),
               ),
               pw.Table.fromTextArray(
                 context: context,
                 data: [
-                  ['Typ', 'Kwota'],
+                  ['Type', 'Amount'],
                   [
-                    'Wydatki',
+                    'Expenses',
                     '${totalExpenses.toStringAsFixed(2)} ${budget?.currency.code ?? 'PLN'}',
                   ],
                   [
-                    'Przychody',
+                    'Incomes',
                     '${totalIncomes.toStringAsFixed(2)} ${budget?.currency.code ?? 'PLN'}',
                   ],
                   if (budget != null && budget.isSet)
                     [
-                      'Pozostały budżet',
+                      'Remaining Budget',
                       '${(budget.amount - totalExpenses).toStringAsFixed(2)} ${budget.currency.code}',
                     ],
                 ],
@@ -101,14 +100,12 @@ class ExportService {
               pw.SizedBox(height: 20),
               pw.Header(
                 level: 1,
-                child: pw.Text(
-                  'Wydatki według kategorii',
-                ),
+                child: pw.Text('Expenses by Category'),
               ),
               pw.Table.fromTextArray(
                 context: context,
                 data: [
-                  ['Kategoria', 'Kwota', 'Procent'],
+                  ['Category', 'Amount', 'Percentage'],
                   ...expenseByCategory.entries.map(
                     (e) => [
                       e.key.displayName,
@@ -121,14 +118,12 @@ class ExportService {
               pw.SizedBox(height: 20),
               pw.Header(
                 level: 1,
-                child: pw.Text(
-                  'Przychody według kategorii',
-                ),
+                child: pw.Text('Incomes by Category'),
               ),
               pw.Table.fromTextArray(
                 context: context,
                 data: [
-                  ['Kategoria', 'Kwota', 'Procent'],
+                  ['Category', 'Amount', 'Percentage'],
                   ...incomeByCategory.entries.map(
                     (e) => [
                       e.key.displayName,
@@ -141,17 +136,17 @@ class ExportService {
               pw.SizedBox(height: 20),
               pw.Header(
                 level: 1,
-                child: pw.Text('Lista transakcji'),
+                child: pw.Text('Transaction List'),
               ),
               pw.Table.fromTextArray(
                 context: context,
                 data: [
                   [
-                    'Data',
-                    'Typ',
-                    'Kategoria',
-                    'Tytuł',
-                    'Kwota',
+                    'Date',
+                    'Type',
+                    'Category',
+                    'Title',
+                    'Amount',
                   ],
                   ...filteredTransactions.map(
                     (t) => [
@@ -159,8 +154,8 @@ class ExportService {
                         'dd.MM.yyyy',
                       ).format(t.date),
                       t.type == TransactionType.expense
-                          ? 'Wydatek'
-                          : 'Przychód',
+                          ? 'Expense'
+                          : 'Income',
                       t.category.displayName,
                       t.title,
                       '${t.amount.toStringAsFixed(2)} ${t.currency.code}',
@@ -174,7 +169,7 @@ class ExportService {
 
     final output = await getTemporaryDirectory();
     final file = File(
-      '${output.path}/raport_finansowy.pdf',
+      '${output.path}/financial_report.pdf',
     );
     await file.writeAsBytes(await pdf.save());
     return file;
@@ -223,38 +218,36 @@ class ExportService {
       (sum, t) => sum + t.baseAmount,
     );
 
-    // Grupuj transakcje według kategorii
     final expenseByCategory = _groupByCategory(expenses);
     final incomeByCategory = _groupByCategory(incomes);
 
     final List<List<dynamic>> csvData = [];
 
-    // Nagłówek
-    csvData.add(['Raport finansowy']);
+    csvData.add(['Financial Report']);
     csvData.add([
-      'Okres',
+      'Period',
       '${DateFormat('dd.MM.yyyy').format(startDate)} - ${DateFormat('dd.MM.yyyy').format(endDate)}',
     ]);
     csvData.add([]);
-    csvData.add(['Podsumowanie']);
-    csvData.add(['Typ', 'Kwota']);
+    csvData.add(['Summary']);
+    csvData.add(['Type', 'Amount']);
     csvData.add([
-      'Wydatki',
+      'Expenses',
       '${totalExpenses.toStringAsFixed(2)} ${budget?.currency.code ?? 'PLN'}',
     ]);
     csvData.add([
-      'Przychody',
+      'Incomes',
       '${totalIncomes.toStringAsFixed(2)} ${budget?.currency.code ?? 'PLN'}',
     ]);
     if (budget != null && budget.isSet) {
       csvData.add([
-        'Pozostały budżet',
+        'Remaining Budget',
         '${(budget.amount - totalExpenses).toStringAsFixed(2)} ${budget.currency.code}',
       ]);
     }
     csvData.add([]);
-    csvData.add(['Wydatki według kategorii']);
-    csvData.add(['Kategoria', 'Kwota', 'Procent']);
+    csvData.add(['Expenses by Category']);
+    csvData.add(['Category', 'Amount', 'Percentage']);
     expenseByCategory.forEach((category, amount) {
       csvData.add([
         category.displayName,
@@ -263,8 +256,8 @@ class ExportService {
       ]);
     });
     csvData.add([]);
-    csvData.add(['Przychody według kategorii']);
-    csvData.add(['Kategoria', 'Kwota', 'Procent']);
+    csvData.add(['Incomes by Category']);
+    csvData.add(['Category', 'Amount', 'Percentage']);
     incomeByCategory.forEach((category, amount) {
       csvData.add([
         category.displayName,
@@ -273,22 +266,22 @@ class ExportService {
       ]);
     });
     csvData.add([]);
-    csvData.add(['Lista transakcji']);
+    csvData.add(['Transaction List']);
     csvData.add([
-      'Data',
-      'Typ',
-      'Kategoria',
-      'Tytuł',
-      'Kwota',
-      'Waluta',
-      'Opis',
+      'Date',
+      'Type',
+      'Category',
+      'Title',
+      'Amount',
+      'Currency',
+      'Description',
     ]);
     filteredTransactions.forEach((t) {
       csvData.add([
         DateFormat('dd.MM.yyyy').format(t.date),
         t.type == TransactionType.expense
-            ? 'Wydatek'
-            : 'Przychód',
+            ? 'Expense'
+            : 'Income',
         t.category.displayName,
         t.title,
         t.amount.toStringAsFixed(2),
@@ -299,7 +292,7 @@ class ExportService {
 
     final output = await getTemporaryDirectory();
     final file = File(
-      '${output.path}/raport_finansowy.csv',
+      '${output.path}/financial_report.csv',
     );
     await file.writeAsString(
       const ListToCsvConverter().convert(csvData),

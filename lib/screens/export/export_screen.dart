@@ -90,7 +90,7 @@ class _ExportScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Pomyślnie wyeksportowano dane do $format',
+              'Successfully exported data to $format',
             ),
           ),
         );
@@ -98,9 +98,7 @@ class _ExportScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Błąd podczas eksportu: $e'),
-          ),
+          SnackBar(content: Text('Export failed: $e')),
         );
       }
     } finally {
@@ -113,14 +111,14 @@ class _ExportScreenState
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      title: 'Eksport danych',
+      title: 'Export Data',
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Wybierz zakres dat do eksportu:',
+              'Select date range to export:',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -129,7 +127,7 @@ class _ExportScreenState
             const SizedBox(height: 16),
             Row(
               children: [
-                const Text('Od:'),
+                const Text('From:'),
                 const SizedBox(width: 16),
                 TextButton(
                   onPressed:
@@ -141,7 +139,7 @@ class _ExportScreenState
                   ),
                 ),
                 const Spacer(),
-                const Text('Do:'),
+                const Text('To:'),
                 const SizedBox(width: 16),
                 TextButton(
                   onPressed:
@@ -156,7 +154,7 @@ class _ExportScreenState
             ),
             const SizedBox(height: 32),
             const Text(
-              'Wybierz format eksportu:',
+              'WSelect export format:',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,

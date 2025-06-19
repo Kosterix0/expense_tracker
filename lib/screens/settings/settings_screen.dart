@@ -1,3 +1,4 @@
+// settings_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:expense_tracker/services/budget_service.dart';
@@ -21,8 +22,8 @@ class _SettingsScreenState
   late int _selectedMonth;
   late int _selectedYear;
   final List<int> _years = List.generate(
-    5,
-    (index) => DateTime.now().year + index - 2,
+    2050 - DateTime.now().year + 1,
+    (index) => DateTime.now().year + index,
   );
 
   @override
@@ -54,18 +55,18 @@ class _SettingsScreenState
 
   String _getMonthName(int month) {
     const months = [
-      'Styczeń',
-      'Luty',
-      'Marzec',
-      'Kwiecień',
-      'Maj',
-      'Czerwiec',
-      'Lipiec',
-      'Sierpień',
-      'Wrzesień',
-      'Październik',
-      'Listopad',
-      'Grudzień',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return months[month - 1];
   }
@@ -73,7 +74,7 @@ class _SettingsScreenState
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      title: 'Ustawienia budżetu',
+      title: 'Budget Settings',
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -85,18 +86,34 @@ class _SettingsScreenState
                 controller: _budgetCtrl,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  labelText: 'Miesięczny budżet',
+                  labelText: 'Monthly Budget',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    color: Colors.white70,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
+                style: const TextStyle(
+                  color: Colors.white,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Podaj kwotę budżetu';
+                    return 'Please enter budget amount';
                   }
                   final n = double.tryParse(
                     value.replaceAll(',', '.'),
                   );
                   if (n == null || n <= 0) {
-                    return 'Nieprawidłowa kwota';
+                    return 'Invalid amount';
                   }
                   return null;
                 },
@@ -105,8 +122,25 @@ class _SettingsScreenState
               DropdownButtonFormField<Currency>(
                 value: _selectedCurrency,
                 decoration: const InputDecoration(
-                  labelText: 'Waluta budżetu',
+                  labelText: 'Budget Currency',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    color: Colors.white70,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
+                dropdownColor: Colors.grey[800],
+                style: const TextStyle(
+                  color: Colors.white,
                 ),
                 items:
                     Currency.values.map((currency) {
@@ -114,6 +148,9 @@ class _SettingsScreenState
                         value: currency,
                         child: Text(
                           '${currency.name} (${currency.code})',
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
                         ),
                       );
                     }).toList(),
@@ -132,24 +169,50 @@ class _SettingsScreenState
                     child: DropdownButtonFormField<int>(
                       value: _selectedMonth,
                       decoration: const InputDecoration(
-                        labelText: 'Miesiąc',
+                        labelText: 'Month',
                         border: OutlineInputBorder(),
+                        labelStyle: TextStyle(
+                          color: Colors.white70,
+                        ),
+                        enabledBorder:
+                            OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.grey,
+                              ),
+                            ),
+                        focusedBorder:
+                            OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.green,
+                              ),
+                            ),
                       ),
+                      dropdownColor: Colors.grey[800],
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
+                      menuMaxHeight: 300,
+                      alignment: Alignment.bottomCenter,
                       items:
                           List.generate(
                                 12,
                                 (index) => index + 1,
                               )
                               .map(
-                                (month) =>
-                                    DropdownMenuItem(
-                                      value: month,
-                                      child: Text(
-                                        _getMonthName(
-                                          month,
+                                (
+                                  month,
+                                ) => DropdownMenuItem(
+                                  value: month,
+                                  child: Text(
+                                    _getMonthName(month),
+                                    style:
+                                        const TextStyle(
+                                          color:
+                                              Colors
+                                                  .white,
                                         ),
-                                      ),
-                                    ),
+                                  ),
+                                ),
                               )
                               .toList(),
                       onChanged: (value) async {
@@ -167,19 +230,47 @@ class _SettingsScreenState
                     child: DropdownButtonFormField<int>(
                       value: _selectedYear,
                       decoration: const InputDecoration(
-                        labelText: 'Rok',
+                        labelText: 'Year',
                         border: OutlineInputBorder(),
+                        labelStyle: TextStyle(
+                          color: Colors.white70,
+                        ),
+                        enabledBorder:
+                            OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.grey,
+                              ),
+                            ),
+                        focusedBorder:
+                            OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.green,
+                              ),
+                            ),
                       ),
+                      dropdownColor: Colors.grey[800],
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
+                      menuMaxHeight: 300,
+                      alignment: Alignment.bottomCenter,
                       items:
                           _years
                               .map(
-                                (year) =>
-                                    DropdownMenuItem(
-                                      value: year,
-                                      child: Text(
-                                        year.toString(),
-                                      ),
-                                    ),
+                                (
+                                  year,
+                                ) => DropdownMenuItem(
+                                  value: year,
+                                  child: Text(
+                                    year.toString(),
+                                    style:
+                                        const TextStyle(
+                                          color:
+                                              Colors
+                                                  .white,
+                                        ),
+                                  ),
+                                ),
                               )
                               .toList(),
                       onChanged: (value) async {
@@ -196,6 +287,13 @@ class _SettingsScreenState
               ),
               const SizedBox(height: 20),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[800],
+                  minimumSize: const Size(
+                    double.infinity,
+                    50,
+                  ),
+                ),
                 onPressed: () async {
                   if (_formKey.currentState!
                       .validate()) {
@@ -219,7 +317,7 @@ class _SettingsScreenState
                     ).showSnackBar(
                       SnackBar(
                         content: Text(
-                          'Budżet na ${_getMonthName(_selectedMonth)} $_selectedYear został ustawiony na ${amount.toStringAsFixed(2)} ${_selectedCurrency.code}',
+                          'Budget for ${_getMonthName(_selectedMonth)} $_selectedYear set to ${amount.toStringAsFixed(2)} ${_selectedCurrency.code}',
                         ),
                         duration: const Duration(
                           seconds: 3,
@@ -235,8 +333,11 @@ class _SettingsScreenState
                     vertical: 12,
                   ),
                   child: Text(
-                    'Zapisz budżet',
-                    style: TextStyle(fontSize: 16),
+                    'Save Budget',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),

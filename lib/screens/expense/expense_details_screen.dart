@@ -4,7 +4,7 @@ import 'package:expense_tracker/services/expense_service.dart';
 import 'package:expense_tracker/domain/expense_state.dart';
 import 'package:expense_tracker/screens/expense/add_expense_screen.dart';
 import 'package:intl/intl.dart';
-import 'package:expense_tracker/domain/currency.dart'; // Dodaj ten import
+import 'package:expense_tracker/domain/currency.dart';
 
 class ExpenseDetailScreen extends ConsumerWidget {
   final ExpenseState expense;
@@ -17,8 +17,9 @@ class ExpenseDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
-        title: const Text('Szczegóły transakcji'),
+        title: const Text('Transaction Details'),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -52,11 +53,16 @@ class ExpenseDetailScreen extends ConsumerWidget {
           ListTile(
             title: Text(
               expense.title,
-              style:
-                  Theme.of(context).textTheme.titleLarge,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(color: Colors.white),
             ),
             subtitle: Text(
               DateFormat.yMMMMd().format(expense.date),
+              style: const TextStyle(
+                color: Colors.white70,
+              ),
             ),
             trailing: Text(
               '${expense.type == TransactionType.expense ? '-' : '+'}${expense.amount.toStringAsFixed(2)} ${expense.currency.symbol}',
@@ -64,40 +70,46 @@ class ExpenseDetailScreen extends ConsumerWidget {
                 color:
                     expense.type ==
                             TransactionType.expense
-                        ? Colors.red
-                        : Colors.green,
+                        ? Colors.red[400]
+                        : Colors.green[400],
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
             ),
           ),
-          const Divider(),
+          const Divider(color: Colors.grey),
           _buildDetailRow(
-            'Kategoria',
+            'Category',
             expense.category.displayName,
           ),
           _buildDetailRow(
-            'Typ',
+            'Type',
             expense.type == TransactionType.expense
-                ? 'Wydatek'
-                : 'Przychód',
+                ? 'Expense'
+                : 'Income',
           ),
           _buildDetailRow(
-            'Waluta',
+            'Currency',
             '${expense.currency.name} (${expense.currency.code})',
           ),
           _buildDetailRow(
-            'Opis',
+            'Description',
             expense.description.isNotEmpty
                 ? expense.description
-                : 'Brak opisu',
+                : 'No description',
           ),
           const Spacer(),
           ElevatedButton.icon(
             icon: const Icon(Icons.delete),
-            label: const Text('Usuń transakcję'),
+            label: const Text(
+              'Delete Transaction',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: Colors.red[800],
               minimumSize: const Size(
                 double.infinity,
                 50,
@@ -108,9 +120,11 @@ class ExpenseDetailScreen extends ConsumerWidget {
                 context: context,
                 builder:
                     (ctx) => AlertDialog(
-                      title: const Text('Usuwać?'),
+                      title: const Text(
+                        'Confirm Delete',
+                      ),
                       content: const Text(
-                        'Czy na pewno chcesz usunąć tę transakcję?',
+                        'Are you sure you want to delete this transaction?',
                       ),
                       actions: [
                         TextButton(
@@ -119,7 +133,7 @@ class ExpenseDetailScreen extends ConsumerWidget {
                                 ctx,
                                 false,
                               ),
-                          child: const Text('Anuluj'),
+                          child: const Text('Cancel'),
                         ),
                         TextButton(
                           onPressed:
@@ -128,7 +142,7 @@ class ExpenseDetailScreen extends ConsumerWidget {
                                 true,
                               ),
                           child: const Text(
-                            'Usuń',
+                            'Delete',
                             style: TextStyle(
                               color: Colors.red,
                             ),
@@ -161,11 +175,15 @@ class ExpenseDetailScreen extends ConsumerWidget {
             label,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
+              color: Colors.white70,
             ),
           ),
           const SizedBox(height: 4),
-          Text(value),
-          const Divider(),
+          Text(
+            value,
+            style: const TextStyle(color: Colors.white),
+          ),
+          const Divider(color: Colors.grey),
         ],
       ),
     );

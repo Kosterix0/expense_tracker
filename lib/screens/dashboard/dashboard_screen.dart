@@ -27,6 +27,7 @@ class _DashboardScreenState
   final DateFormat _monthFormat = DateFormat(
     'MMMM yyyy',
   );
+  final DateFormat _dayFormat = DateFormat('d MMM');
   BudgetState? _currentMonthBudget;
 
   @override
@@ -73,8 +74,9 @@ class _DashboardScreenState
   }
 
   String _formatAmount(double value) {
-    if (value >= 1000)
+    if (value >= 1000) {
       return '${(value / 1000).toStringAsFixed(1)}K';
+    }
     return value.toStringAsFixed(0);
   }
 
@@ -82,40 +84,45 @@ class _DashboardScreenState
     Map<Category, double> sums,
     String title,
   ) {
-    final List<BarChartGroupData> barGroups =
-        sums.entries.map((ent) {
-          final color =
-              Colors.primaries[ent.key.index %
-                  Colors.primaries.length];
-          return BarChartGroupData(
-            x: ent.key.index,
-            barsSpace: 4,
-            barRods: [
-              BarChartRodData(
-                toY: ent.value,
-                color: color,
-                width: 20,
-              ),
-            ],
-          );
-        }).toList();
+    final maxValue = sums.values.reduce(
+      (a, b) => a > b ? a : b,
+    );
+    final interval = (maxValue / 5).ceilToDouble();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
-        const SizedBox(height: 8),
         SizedBox(
           height: 300,
           child: BarChart(
             BarChartData(
-              barGroups: barGroups,
+              barGroups:
+                  sums.entries.map((ent) {
+                    final color =
+                        Colors.primaries[ent.key.index %
+                            Colors.primaries.length];
+                    return BarChartGroupData(
+                      x: ent.key.index,
+                      barsSpace: 4,
+                      barRods: [
+                        BarChartRodData(
+                          toY: ent.value,
+                          color: color,
+                          width: 20,
+                        ),
+                      ],
+                    );
+                  }).toList(),
               titlesData: FlTitlesData(
                 show: true,
                 bottomTitles: AxisTitles(
@@ -144,8 +151,20 @@ class _DashboardScreenState
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
+                    interval: interval,
                     getTitlesWidget: (value, meta) {
-                      return Text(_formatAmount(value));
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          right: 4.0,
+                        ),
+                        child: Text(
+                          _formatAmount(value),
+                          style: const TextStyle(
+                            fontSize: 10,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -175,7 +194,7 @@ class _DashboardScreenState
                     final category =
                         Category.values[group.x.toInt()];
                     return BarTooltipItem(
-                      '${category.displayName}\n${_formatAmount(rod.toY)} zł',
+                      '${category.displayName}\n${rod.toY.toStringAsFixed(2)} ${_currentMonthBudget?.currency.code ?? 'PLN'}',
                       const TextStyle(
                         color: Colors.white,
                       ),
@@ -190,10 +209,132 @@ class _DashboardScreenState
     );
   }
 
+  Widget _buildLineChart(
+    List<ExpenseState> transactions,
+    String title,
+  ) {
+    final dailySums = <DateTime, double>{};
+    for (var t in transactions) {
+      final day = DateTime(
+        t.date.year,
+        t.date.month,
+        t.date.day,
+      );
+      dailySums[day] =
+          (dailySums[day] ?? 0) + t.baseAmount;
+    }
+
+    final sortedDays = dailySums.keys.toList()..sort();
+    final maxValue = dailySums.values.reduce(
+      (a, b) => a > b ? a : b,
+    );
+    final interval = (maxValue / 5).ceilToDouble();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 300,
+          child: LineChart(
+            LineChartData(
+              lineBarsData: [
+                LineChartBarData(
+                  spots:
+                      sortedDays.map((day) {
+                        return FlSpot(
+                          day.day.toDouble(),
+                          dailySums[day]!,
+                        );
+                      }).toList(),
+                  isCurved: true,
+                  color:
+                      title.contains('Expenses')
+                          ? Colors.red
+                          : Colors.green,
+                  barWidth: 4,
+                  isStrokeCapRound: true,
+                  belowBarData: BarAreaData(show: false),
+                  dotData: FlDotData(show: true),
+                ),
+              ],
+              titlesData: FlTitlesData(
+                show: true,
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) {
+                      final day = DateTime(
+                        _selectedDate.year,
+                        _selectedDate.month,
+                        value.toInt(),
+                      );
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          top: 8.0,
+                        ),
+                        child: Text(
+                          _dayFormat.format(day),
+                          style: const TextStyle(
+                            fontSize: 10,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    interval: interval,
+                    getTitlesWidget: (value, meta) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          right: 4.0,
+                        ),
+                        child: Text(
+                          _formatAmount(value),
+                          style: const TextStyle(
+                            fontSize: 10,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false,
+                  ),
+                ),
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false,
+                  ),
+                ),
+              ),
+              gridData: FlGridData(show: true),
+              borderData: FlBorderData(show: true),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final transactions = ref.watch(transactionProvider);
-
     final filteredTransactions =
         transactions.where((t) {
           return t.date.year == _selectedDate.year &&
@@ -228,8 +369,8 @@ class _DashboardScreenState
       bottomTabBar: TabBar(
         controller: _tabController,
         tabs: const [
-          Tab(text: 'Wydatki'),
-          Tab(text: 'Przychody'),
+          Tab(text: 'Expenses'),
+          Tab(text: 'Incomes'),
         ],
       ),
       body: Column(
@@ -289,13 +430,13 @@ class _DashboardScreenState
                 _buildTabContent(
                   expenses,
                   totalExpenses,
-                  'Wydatki',
+                  'Expenses',
                   _currentMonthBudget,
                 ),
                 _buildTabContent(
                   incomes,
                   totalIncomes,
-                  'Przychody',
+                  'Incomes',
                   _currentMonthBudget,
                 ),
               ],
@@ -311,7 +452,10 @@ class _DashboardScreenState
             ),
           );
         },
-        child: const Icon(Icons.add),
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
     );
   }
@@ -332,7 +476,7 @@ class _DashboardScreenState
           child: Column(
             children: [
               Text(
-                'Budżet: ${budget.amount.toStringAsFixed(2)} ${budget.currency.code}',
+                'Budget: ${budget.amount.toStringAsFixed(2)} ${budget.currency.code}',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -349,7 +493,7 @@ class _DashboardScreenState
               ),
               const SizedBox(height: 8),
               Text(
-                'Pozostało: ${remainingBudget.toStringAsFixed(2)} ${budget.currency.code}',
+                'Remaining: ${remainingBudget.toStringAsFixed(2)} ${budget.currency.code}',
                 style: TextStyle(
                   fontSize: 14,
                   color:
@@ -377,7 +521,7 @@ class _DashboardScreenState
           child: Column(
             children: [
               const Text(
-                'Nie ustawiono budżetu na ten miesiąc',
+                'No budget set for this month.',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -395,7 +539,7 @@ class _DashboardScreenState
                     ),
                   );
                 },
-                child: const Text('Ustaw budżet'),
+                child: const Text('Set Budget'),
               ),
             ],
           ),
@@ -412,7 +556,7 @@ class _DashboardScreenState
   ) {
     if (transactions.isEmpty) {
       return const Center(
-        child: Text('Brak danych do wyświetlenia'),
+        child: Text('No data to display'),
       );
     }
 
@@ -432,20 +576,20 @@ class _DashboardScreenState
               child: Column(
                 children: [
                   Text(
-                    'Suma $title: ${totalAmount.toStringAsFixed(2)} ${budget?.currency.code ?? 'PLN'}',
+                    'Total $title: ${totalAmount.toStringAsFixed(2)} ${budget?.currency.code ?? 'PLN'}',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  if (title == 'Wydatki' &&
+                  if (title == 'Expenses' &&
                       budget != null &&
                       budget.isSet)
                     Column(
                       children: [
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         Text(
-                          'Bilans: ${(budget.amount - totalAmount).toStringAsFixed(2)} ${budget.currency.code}',
+                          'Balance: ${(budget.amount - totalAmount).toStringAsFixed(2)} ${budget.currency.code}',
                           style: TextStyle(
                             fontSize: 16,
                             color:
@@ -462,15 +606,17 @@ class _DashboardScreenState
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           _buildPieChart(
             sums,
-            'Rozkład $title według kategorii',
+            'Distribution of $title by Category',
           ),
+          const SizedBox(height: 24),
+          _buildLineChart(transactions, '$title Trend'),
           const SizedBox(height: 24),
           _buildBarChart(
             sums,
-            'Porównanie $title w kategoriach',
+            'Comparison of $title across Categories',
           ),
         ],
       ),
@@ -481,67 +627,74 @@ class _DashboardScreenState
     Map<Category, double> sums,
     String title,
   ) {
-    final List<PieChartSectionData> sections =
-        sums.entries.map((ent) {
-          final color =
-              Colors.primaries[ent.key.index %
-                  Colors.primaries.length];
-          return PieChartSectionData(
-            color: color,
-            value: ent.value,
-            title: '${_formatAmount(ent.value)} zł',
-            radius: 60,
-            titleStyle: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          );
-        }).toList();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
-        const SizedBox(height: 8),
         SizedBox(
-          height: 300,
+          height: 250,
           child: PieChart(
             PieChartData(
-              sections: sections,
+              sections:
+                  sums.entries.map((ent) {
+                    final color =
+                        Colors.primaries[ent.key.index %
+                            Colors.primaries.length];
+                    return PieChartSectionData(
+                      color: color,
+                      value: ent.value,
+                      title: '',
+                      radius: 60,
+                    );
+                  }).toList(),
               centerSpaceRadius: 40,
               sectionsSpace: 2,
             ),
           ),
         ),
         const SizedBox(height: 16),
-        ...sums.entries.map(
-          (entry) => Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 4,
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 16,
-                  height: 16,
-                  color:
-                      Colors.primaries[entry.key.index %
-                          Colors.primaries.length],
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '${entry.key.displayName}: ${entry.value.toStringAsFixed(2)} zł',
-                ),
-              ],
-            ),
-          ),
+        Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          children:
+              sums.entries.map((entry) {
+                final color =
+                    Colors.primaries[entry.key.index %
+                        Colors.primaries.length];
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 16,
+                      height: 16,
+                      color: color,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      entry.key.displayName,
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '(${entry.value.toStringAsFixed(2)} ${_currentMonthBudget?.currency.code ?? 'PLN'})',
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                );
+              }).toList(),
         ),
       ],
     );

@@ -29,8 +29,31 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Expenses',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      title: 'Expense Tracker',
+      theme: ThemeData.dark().copyWith(
+        primaryColor: Colors.green[600],
+        colorScheme: ColorScheme.dark(
+          primary: Colors.green[400]!,
+          secondary: Colors.green[800]!,
+        ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.grey[900],
+          elevation: 0,
+        ),
+        scaffoldBackgroundColor: Colors.grey[900],
+        cardTheme: CardTheme(
+          color: Colors.grey[850],
+          elevation: 2,
+          margin: const EdgeInsets.all(8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        floatingActionButtonTheme:
+            FloatingActionButtonThemeData(
+              backgroundColor: Colors.green[600],
+            ),
+      ),
       home: SignInScreen(),
     );
   }

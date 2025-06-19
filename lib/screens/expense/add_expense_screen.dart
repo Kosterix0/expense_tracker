@@ -1,3 +1,4 @@
+// add_expense_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:expense_tracker/app.dart';
@@ -67,7 +68,7 @@ class _AddExpenseScreenState
     if (_selectedCategory == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Wybierz kategorię'),
+          content: Text('Please select a category'),
         ),
       );
       return;
@@ -128,8 +129,8 @@ class _AddExpenseScreenState
     return AppScaffold(
       title:
           widget.expense != null
-              ? 'Edytuj transakcję'
-              : 'Dodaj transakcję',
+              ? 'Edit Transaction'
+              : 'Add Transaction',
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -139,13 +140,29 @@ class _AddExpenseScreenState
               TextFormField(
                 controller: _titleCtrl,
                 decoration: const InputDecoration(
-                  labelText: 'Tytuł',
+                  labelText: 'Title',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    color: Colors.white70,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
+                style: const TextStyle(
+                  color: Colors.white,
                 ),
                 validator:
                     (v) =>
                         (v == null || v.isEmpty)
-                            ? 'Podaj tytuł'
+                            ? 'Please enter a title'
                             : null,
               ),
               const SizedBox(height: 16),
@@ -153,10 +170,19 @@ class _AddExpenseScreenState
                 children: [
                   Expanded(
                     child: ChoiceChip(
-                      label: const Text('Wydatek'),
+                      label: const Text('Expense'),
                       selected:
                           _type ==
                           TransactionType.expense,
+                      selectedColor: Colors.green[800],
+                      labelStyle: TextStyle(
+                        color:
+                            _type ==
+                                    TransactionType
+                                        .expense
+                                ? Colors.white
+                                : Colors.white70,
+                      ),
                       onSelected:
                           (_) => setState(() {
                             _type =
@@ -168,10 +194,19 @@ class _AddExpenseScreenState
                   const SizedBox(width: 8),
                   Expanded(
                     child: ChoiceChip(
-                      label: const Text('Przychód'),
+                      label: const Text('Income'),
                       selected:
                           _type ==
                           TransactionType.income,
+                      selectedColor: Colors.green[800],
+                      labelStyle: TextStyle(
+                        color:
+                            _type ==
+                                    TransactionType
+                                        .income
+                                ? Colors.white
+                                : Colors.white70,
+                      ),
                       onSelected:
                           (_) => setState(() {
                             _type =
@@ -184,10 +219,13 @@ class _AddExpenseScreenState
               ),
               const SizedBox(height: 16),
               ListTile(
-                title: const Text('Data transakcji'),
+                title: const Text('Transaction Date'),
                 subtitle: Text(
                   DateFormat.yMMMMd().format(
                     _selectedDate,
+                  ),
+                  style: const TextStyle(
+                    color: Colors.white70,
                   ),
                 ),
                 trailing: const Icon(
@@ -199,21 +237,39 @@ class _AddExpenseScreenState
               TextFormField(
                 controller: _amountCtrl,
                 decoration: const InputDecoration(
-                  labelText: 'Kwota',
+                  labelText: 'Amount',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    color: Colors.white70,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
+                style: const TextStyle(
+                  color: Colors.white,
                 ),
                 keyboardType:
                     const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
                 validator: (v) {
-                  if (v == null || v.isEmpty)
-                    return 'Podaj kwotę';
+                  if (v == null || v.isEmpty) {
+                    return 'Please enter an amount';
+                  }
                   final n = double.tryParse(
                     v.replaceAll(',', '.'),
                   );
-                  if (n == null || n <= 0)
-                    return 'Nieprawidłowa kwota';
+                  if (n == null || n <= 0) {
+                    return 'Invalid amount';
+                  }
                   return null;
                 },
               ),
@@ -226,6 +282,9 @@ class _AddExpenseScreenState
                         value: currency,
                         child: Text(
                           '${currency.name} (${currency.code})',
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
                         ),
                       );
                     }).toList(),
@@ -237,22 +296,61 @@ class _AddExpenseScreenState
                   }
                 },
                 decoration: const InputDecoration(
-                  labelText: 'Waluta',
+                  labelText: 'Currency',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    color: Colors.white70,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
+                dropdownColor: Colors.grey[800],
+                style: const TextStyle(
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<Category>(
                 value: _selectedCategory,
                 decoration: const InputDecoration(
-                  labelText: 'Kategoria',
+                  labelText: 'Category',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    color: Colors.white70,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
+                dropdownColor: Colors.grey[800],
+                style: const TextStyle(
+                  color: Colors.white,
                 ),
                 items:
                     categories.map((cat) {
                       return DropdownMenuItem(
                         value: cat,
-                        child: Text(cat.displayName),
+                        child: Text(
+                          cat.displayName,
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
                       );
                     }).toList(),
                 onChanged:
@@ -262,20 +360,39 @@ class _AddExpenseScreenState
                 validator:
                     (v) =>
                         v == null
-                            ? 'Wybierz kategorię'
+                            ? 'Please select a category'
                             : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _descriptionCtrl,
                 decoration: const InputDecoration(
-                  labelText: 'Opis (opcjonalnie)',
+                  labelText: 'Description (optional)',
                   border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    color: Colors.white70,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
+                style: const TextStyle(
+                  color: Colors.white,
                 ),
                 maxLines: 3,
               ),
               const SizedBox(height: 24),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[800],
+                ),
                 onPressed: _save,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -283,9 +400,12 @@ class _AddExpenseScreenState
                   ),
                   child: Text(
                     widget.expense != null
-                        ? 'Zaktualizuj'
-                        : 'Zapisz',
-                    style: const TextStyle(fontSize: 16),
+                        ? 'Update'
+                        : 'Save',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),

@@ -15,11 +15,11 @@ extension CurrencyExtension on Currency {
   String get name {
     switch (this) {
       case Currency.PLN:
-        return 'Polski złoty';
+        return 'Polish złoty';
       case Currency.EUR:
         return 'Euro';
       case Currency.USD:
-        return 'Dolar amerykański';
+        return 'US Dollar';
     }
   }
 

@@ -1,3 +1,4 @@
+// transaction_history_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -49,7 +50,7 @@ class _TransactionHistoryScreenState
         }).toList();
 
     return AppScaffold(
-      title: 'Historia transakcji',
+      title: 'Transaction History',
       body: Column(
         children: [
           Padding(
@@ -73,7 +74,10 @@ class _TransactionHistoryScreenState
                   onPressed: () => _selectDate(context),
                   child: Text(
                     _monthFormat.format(_selectedDate),
-                    style: const TextStyle(fontSize: 18),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 IconButton(
@@ -98,7 +102,12 @@ class _TransactionHistoryScreenState
               child:
                   filteredTransactions.isEmpty
                       ? const Center(
-                        child: Text('Brak transakcji'),
+                        child: Text(
+                          'No transactions',
+                          style: TextStyle(
+                            color: Colors.white70,
+                          ),
+                        ),
                       )
                       : ListView.separated(
                         padding:
@@ -108,8 +117,10 @@ class _TransactionHistoryScreenState
                         itemCount:
                             filteredTransactions.length,
                         separatorBuilder:
-                            (_, __) =>
-                                const Divider(height: 1),
+                            (_, __) => const Divider(
+                              height: 1,
+                              color: Colors.grey,
+                            ),
                         itemBuilder: (_, i) {
                           final t =
                               filteredTransactions[i];
@@ -117,6 +128,7 @@ class _TransactionHistoryScreenState
                               t.type ==
                               TransactionType.expense;
                           return ListTile(
+                            tileColor: Colors.grey[850],
                             onTap:
                                 () => Navigator.push(
                                   context,
@@ -131,27 +143,37 @@ class _TransactionHistoryScreenState
                             leading: CircleAvatar(
                               backgroundColor:
                                   isExpense
-                                      ? Colors.red
-                                      : Colors.green,
+                                      ? Colors.red[800]
+                                      : Colors
+                                          .green[800],
                               child: Text(
-                                t.category.name
+                                t.category.displayName
                                     .toUpperCase()[0],
                                 style: const TextStyle(
                                   color: Colors.white,
                                 ),
                               ),
                             ),
-                            title: Text(t.title),
+                            title: Text(
+                              t.title,
+                              style: const TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
                             subtitle: Text(
                               '${t.category.displayName} · ${DateFormat.yMMMd().format(t.date)}',
+                              style: const TextStyle(
+                                color: Colors.white70,
+                              ),
                             ),
                             trailing: Text(
                               '${isExpense ? '-' : '+'}${t.amount.toStringAsFixed(2)} ${t.currency.symbol}',
                               style: TextStyle(
                                 color:
                                     isExpense
-                                        ? Colors.red
-                                        : Colors.green,
+                                        ? Colors.red[400]
+                                        : Colors
+                                            .green[400],
                                 fontWeight:
                                     FontWeight.bold,
                               ),

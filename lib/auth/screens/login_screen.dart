@@ -1,3 +1,4 @@
+// login_screen.dart
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/screens/dashboard/dashboard_screen.dart';
@@ -12,7 +13,7 @@ class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE3F2FD),
+      backgroundColor: Colors.grey[900],
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -22,29 +23,32 @@ class SignInScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Witaj!",
+                "Welcome!",
                 style: TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue.shade900,
+                  color: Colors.green[400],
                   letterSpacing: 1.5,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text(
-                "Zaloguj się przez Google, aby korzystać z notatnika.",
+                "Sign in with Google to use the expense tracker.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 18,
-                  color: Colors.blueGrey.shade700,
+                  color: Colors.grey[400],
                 ),
               ),
-              SizedBox(height: 48),
+              const SizedBox(height: 48),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.blue.shade900,
-                  minimumSize: Size(double.infinity, 50),
+                  backgroundColor: Colors.grey[800],
+                  foregroundColor: Colors.green[400],
+                  minimumSize: const Size(
+                    double.infinity,
+                    50,
+                  ),
                   elevation: 3,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(
@@ -52,7 +56,7 @@ class SignInScreen extends StatelessWidget {
                     ),
                   ),
                   side: BorderSide(
-                    color: Colors.blue.shade900,
+                    color: Colors.green[400]!,
                     width: 2,
                   ),
                 ),
@@ -61,8 +65,8 @@ class SignInScreen extends StatelessWidget {
                   height: 28,
                   width: 28,
                 ),
-                label: Text(
-                  "Zaloguj się z Google",
+                label: const Text(
+                  "Sign in with Google",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -77,7 +81,8 @@ class SignInScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder:
-                            (_) => DashboardScreen(),
+                            (_) =>
+                                const DashboardScreen(),
                       ),
                     );
                   }

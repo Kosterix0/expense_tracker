@@ -16,91 +16,149 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final _auth = GoogleAuthService();
     return Drawer(
+      backgroundColor: Colors.grey[900],
       child: SafeArea(
-        child: ListView(
-          padding: EdgeInsets.zero,
+        child: Column(
           children: [
-            const DrawerHeader(
+            Container(
+              height: 80,
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.green[800],
               ),
+              padding: const EdgeInsets.only(left: 16),
+              alignment: Alignment.centerLeft,
+
               child: Text(
                 'Menu',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 20,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.dashboard),
-              title: const Text('Dashboard'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (_) => const DashboardScreen(),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  ListTile(
+                    leading: const Icon(
+                      Icons.dashboard,
+                      color: Colors.white,
+                    ),
+                    title: const Text(
+                      'Dashboard',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) =>
+                                  const DashboardScreen(),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.history),
-              title: const Text('Historia'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (_) =>
-                            const TransactionHistoryScreen(),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.history,
+                      color: Colors.white,
+                    ),
+                    title: const Text(
+                      'Transaction History',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) =>
+                                  const TransactionHistoryScreen(),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Ustawienia budżetu'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (_) => const SettingsScreen(),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.settings,
+                      color: Colors.white,
+                    ),
+                    title: const Text(
+                      'Budget Settings',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) =>
+                                  const SettingsScreen(),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Wyloguj'),
-              onTap: () async {
-                await _auth.signOut();
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (_) => SignInScreen(),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.import_export,
+                      color: Colors.white,
+                    ),
+                    title: const Text(
+                      'Export Data',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) =>
+                                  const ExportScreen(),
+                        ),
+                      );
+                    },
                   ),
-                  (route) => false,
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.import_export),
-              title: const Text('Eksport danych'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ExportScreen(),
+                  const Divider(color: Colors.grey),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.logout,
+                      color: Colors.white,
+                    ),
+                    title: const Text(
+                      'Logout',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onTap: () async {
+                      await _auth.signOut();
+                      Navigator.of(
+                        context,
+                      ).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (_) => SignInScreen(),
+                        ),
+                        (route) => false,
+                      );
+                    },
                   ),
-                );
-              },
+                ],
+              ),
             ),
           ],
         ),

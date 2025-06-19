@@ -24,29 +24,29 @@ extension CategoryExtension on Category {
   String get displayName {
     switch (this) {
       case Category.food:
-        return 'Jedzenie';
+        return 'Food';
       case Category.transport:
         return 'Transport';
       case Category.entertainment:
-        return 'Rozrywka';
+        return 'Entertainment';
       case Category.utilities:
-        return 'Opłaty';
+        return 'Utilities';
       case Category.healthcare:
-        return 'Zdrowie';
+        return 'Healthcare';
       case Category.education:
-        return 'Edukacja';
+        return 'Education';
       case Category.work:
-        return 'Praca';
+        return 'Work';
       case Category.shopping:
-        return 'Zakupy';
+        return 'Shopping';
       case Category.salary:
-        return 'Wynagrodzenie';
+        return 'Salary';
       case Category.gift:
-        return 'Prezent';
+        return 'Gift';
       case Category.bonus:
-        return 'Premia';
+        return 'Bonus';
       case Category.other:
-        return 'Inne';
+        return 'Other';
     }
   }
 }
