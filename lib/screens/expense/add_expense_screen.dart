@@ -130,285 +130,306 @@ class _AddExpenseScreenState
           widget.expense != null
               ? 'Edit Transaction'
               : 'Add Transaction',
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: _titleCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Title',
-                  border: OutlineInputBorder(),
-                  labelStyle: TextStyle(
-                    color: Colors.white70,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.green,
-                    ),
-                  ),
-                ),
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-                validator:
-                    (v) =>
-                        (v == null || v.isEmpty)
-                            ? 'Please enter a title'
-                            : null,
-              ),
-              const SizedBox(height: 16),
-              Row(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: 600,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                shrinkWrap: true,
                 children: [
-                  Expanded(
-                    child: ChoiceChip(
-                      label: const Text('Expense'),
-                      selected:
-                          _type ==
-                          TransactionType.expense,
-                      selectedColor: Colors.green[800],
+                  TextFormField(
+                    controller: _titleCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Title',
+                      border: OutlineInputBorder(),
                       labelStyle: TextStyle(
-                        color:
-                            _type ==
-                                    TransactionType
-                                        .expense
-                                ? Colors.white
-                                : Colors.white70,
+                        color: Colors.white70,
                       ),
-                      onSelected:
-                          (_) => setState(() {
-                            _type =
-                                TransactionType.expense;
-                            _selectedCategory = null;
-                          }),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.green,
+                        ),
+                      ),
+                    ),
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                    validator:
+                        (v) =>
+                            (v == null || v.isEmpty)
+                                ? 'Please enter a title'
+                                : null,
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ChoiceChip(
+                          label: const Text('Expense'),
+                          selected:
+                              _type ==
+                              TransactionType.expense,
+                          selectedColor:
+                              Colors.green[800],
+                          labelStyle: TextStyle(
+                            color:
+                                _type ==
+                                        TransactionType
+                                            .expense
+                                    ? Colors.white
+                                    : Colors.white70,
+                          ),
+                          onSelected:
+                              (_) => setState(() {
+                                _type =
+                                    TransactionType
+                                        .expense;
+                                _selectedCategory = null;
+                              }),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: ChoiceChip(
+                          label: const Text('Income'),
+                          selected:
+                              _type ==
+                              TransactionType.income,
+                          selectedColor:
+                              Colors.green[800],
+                          labelStyle: TextStyle(
+                            color:
+                                _type ==
+                                        TransactionType
+                                            .income
+                                    ? Colors.white
+                                    : Colors.white70,
+                          ),
+                          onSelected:
+                              (_) => setState(() {
+                                _type =
+                                    TransactionType
+                                        .income;
+                                _selectedCategory = null;
+                              }),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  ListTile(
+                    title: const Text(
+                      'Transaction Date',
+                    ),
+                    subtitle: Text(
+                      DateFormat.yMMMMd().format(
+                        _selectedDate,
+                      ),
+                      style: const TextStyle(
+                        color: Colors.white70,
+                      ),
+                    ),
+                    trailing: const Icon(
+                      Icons.calendar_today,
+                    ),
+                    onTap: () => _selectDate(context),
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _amountCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Amount',
+                      border: OutlineInputBorder(),
+                      labelStyle: TextStyle(
+                        color: Colors.white70,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.green,
+                        ),
+                      ),
+                    ),
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                    validator: (v) {
+                      if (v == null || v.isEmpty) {
+                        return 'Please enter an amount';
+                      }
+                      final n = double.tryParse(
+                        v.replaceAll(',', '.'),
+                      );
+                      if (n == null || n <= 0) {
+                        return 'Invalid amount';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<Currency>(
+                    value: _selectedCurrency,
+                    items:
+                        Currency.values.map((currency) {
+                          return DropdownMenuItem(
+                            value: currency,
+                            child: Text(
+                              '${currency.name} (${currency.code})',
+                              style: const TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(
+                          () =>
+                              _selectedCurrency = value,
+                        );
+                      }
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Currency',
+                      border: OutlineInputBorder(),
+                      labelStyle: TextStyle(
+                        color: Colors.white70,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.green,
+                        ),
+                      ),
+                    ),
+                    dropdownColor: Colors.grey[800],
+                    style: const TextStyle(
+                      color: Colors.white,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: ChoiceChip(
-                      label: const Text('Income'),
-                      selected:
-                          _type ==
-                          TransactionType.income,
-                      selectedColor: Colors.green[800],
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<Category>(
+                    value: _selectedCategory,
+                    decoration: const InputDecoration(
+                      labelText: 'Category',
+                      border: OutlineInputBorder(),
                       labelStyle: TextStyle(
-                        color:
-                            _type ==
-                                    TransactionType
-                                        .income
-                                ? Colors.white
-                                : Colors.white70,
+                        color: Colors.white70,
                       ),
-                      onSelected:
-                          (_) => setState(() {
-                            _type =
-                                TransactionType.income;
-                            _selectedCategory = null;
-                          }),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.green,
+                        ),
+                      ),
+                    ),
+                    dropdownColor: Colors.grey[800],
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                    items:
+                        categories.map((cat) {
+                          return DropdownMenuItem(
+                            value: cat,
+                            child: Text(
+                              cat.displayName,
+                              style: const TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                    onChanged:
+                        (v) => setState(
+                          () => _selectedCategory = v,
+                        ),
+                    validator:
+                        (v) =>
+                            v == null
+                                ? 'Please select a category'
+                                : null,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _descriptionCtrl,
+                    decoration: const InputDecoration(
+                      labelText:
+                          'Description (optional)',
+                      border: OutlineInputBorder(),
+                      labelStyle: TextStyle(
+                        color: Colors.white70,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.green,
+                        ),
+                      ),
+                    ),
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                    maxLines: 3,
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Colors.green[800],
+                      ),
+                      onPressed: _save,
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.symmetric(
+                              vertical: 12,
+                            ),
+                        child: Text(
+                          widget.expense != null
+                              ? 'Update'
+                              : 'Save',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              ListTile(
-                title: const Text('Transaction Date'),
-                subtitle: Text(
-                  DateFormat.yMMMMd().format(
-                    _selectedDate,
-                  ),
-                  style: const TextStyle(
-                    color: Colors.white70,
-                  ),
-                ),
-                trailing: const Icon(
-                  Icons.calendar_today,
-                ),
-                onTap: () => _selectDate(context),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _amountCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Amount',
-                  border: OutlineInputBorder(),
-                  labelStyle: TextStyle(
-                    color: Colors.white70,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.green,
-                    ),
-                  ),
-                ),
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-                keyboardType:
-                    const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                validator: (v) {
-                  if (v == null || v.isEmpty) {
-                    return 'Please enter an amount';
-                  }
-                  final n = double.tryParse(
-                    v.replaceAll(',', '.'),
-                  );
-                  if (n == null || n <= 0) {
-                    return 'Invalid amount';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<Currency>(
-                value: _selectedCurrency,
-                items:
-                    Currency.values.map((currency) {
-                      return DropdownMenuItem(
-                        value: currency,
-                        child: Text(
-                          '${currency.name} (${currency.code})',
-                          style: const TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(
-                      () => _selectedCurrency = value,
-                    );
-                  }
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Currency',
-                  border: OutlineInputBorder(),
-                  labelStyle: TextStyle(
-                    color: Colors.white70,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.green,
-                    ),
-                  ),
-                ),
-                dropdownColor: Colors.grey[800],
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<Category>(
-                value: _selectedCategory,
-                decoration: const InputDecoration(
-                  labelText: 'Category',
-                  border: OutlineInputBorder(),
-                  labelStyle: TextStyle(
-                    color: Colors.white70,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.green,
-                    ),
-                  ),
-                ),
-                dropdownColor: Colors.grey[800],
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-                items:
-                    categories.map((cat) {
-                      return DropdownMenuItem(
-                        value: cat,
-                        child: Text(
-                          cat.displayName,
-                          style: const TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                onChanged:
-                    (v) => setState(
-                      () => _selectedCategory = v,
-                    ),
-                validator:
-                    (v) =>
-                        v == null
-                            ? 'Please select a category'
-                            : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _descriptionCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Description (optional)',
-                  border: OutlineInputBorder(),
-                  labelStyle: TextStyle(
-                    color: Colors.white70,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.green,
-                    ),
-                  ),
-                ),
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[800],
-                ),
-                onPressed: _save,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                  ),
-                  child: Text(
-                    widget.expense != null
-                        ? 'Update'
-                        : 'Save',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

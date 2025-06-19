@@ -23,7 +23,9 @@ dependencies:
   path_provider: ^2.0.15
   open_file: ^3.5.10
   csv: ^5.0.0
-  google_sign_in_web: ^0.10.0
+  google_sign_in_web: 0.12.4+4
+  file_saver: 0.2.14
+  universal_html: ^2.0.0
 
 dev_dependencies:
   flutter_test:

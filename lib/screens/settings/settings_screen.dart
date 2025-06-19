@@ -74,273 +74,297 @@ class _SettingsScreenState
   Widget build(BuildContext context) {
     return AppScaffold(
       title: 'Budget Settings',
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                controller: _budgetCtrl,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Monthly Budget',
-                  border: OutlineInputBorder(),
-                  labelStyle: TextStyle(
-                    color: Colors.white70,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey,
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: 600,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    controller: _budgetCtrl,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'Monthly Budget',
+                      border: OutlineInputBorder(),
+                      labelStyle: TextStyle(
+                        color: Colors.white70,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.green,
+                        ),
+                      ),
                     ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.green,
+                    style: const TextStyle(
+                      color: Colors.white,
                     ),
+                    validator: (value) {
+                      if (value == null ||
+                          value.isEmpty) {
+                        return 'Please enter budget amount';
+                      }
+                      final n = double.tryParse(
+                        value.replaceAll(',', '.'),
+                      );
+                      if (n == null || n <= 0) {
+                        return 'Invalid amount';
+                      }
+                      return null;
+                    },
                   ),
-                ),
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter budget amount';
-                  }
-                  final n = double.tryParse(
-                    value.replaceAll(',', '.'),
-                  );
-                  if (n == null || n <= 0) {
-                    return 'Invalid amount';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              DropdownButtonFormField<Currency>(
-                value: _selectedCurrency,
-                decoration: const InputDecoration(
-                  labelText: 'Budget Currency',
-                  border: OutlineInputBorder(),
-                  labelStyle: TextStyle(
-                    color: Colors.white70,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey,
+                  const SizedBox(height: 20),
+                  DropdownButtonFormField<Currency>(
+                    value: _selectedCurrency,
+                    decoration: const InputDecoration(
+                      labelText: 'Budget Currency',
+                      border: OutlineInputBorder(),
+                      labelStyle: TextStyle(
+                        color: Colors.white70,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.green,
+                        ),
+                      ),
                     ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.green,
+                    dropdownColor: Colors.grey[800],
+                    style: const TextStyle(
+                      color: Colors.white,
                     ),
+                    items:
+                        Currency.values.map((currency) {
+                          return DropdownMenuItem(
+                            value: currency,
+                            child: Text(
+                              '${currency.name} (${currency.code})',
+                              style: const TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(
+                          () =>
+                              _selectedCurrency = value,
+                        );
+                      }
+                    },
                   ),
-                ),
-                dropdownColor: Colors.grey[800],
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-                items:
-                    Currency.values.map((currency) {
-                      return DropdownMenuItem(
-                        value: currency,
-                        child: Text(
-                          '${currency.name} (${currency.code})',
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<
+                          int
+                        >(
+                          value: _selectedMonth,
+                          decoration: const InputDecoration(
+                            labelText: 'Month',
+                            border: OutlineInputBorder(),
+                            labelStyle: TextStyle(
+                              color: Colors.white70,
+                            ),
+                            enabledBorder:
+                                OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                            focusedBorder:
+                                OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.green,
+                                  ),
+                                ),
+                          ),
+                          dropdownColor:
+                              Colors.grey[800],
                           style: const TextStyle(
                             color: Colors.white,
                           ),
-                        ),
-                      );
-                    }).toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(
-                      () => _selectedCurrency = value,
-                    );
-                  }
-                },
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: DropdownButtonFormField<int>(
-                      value: _selectedMonth,
-                      decoration: const InputDecoration(
-                        labelText: 'Month',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          color: Colors.white70,
-                        ),
-                        enabledBorder:
-                            OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey,
-                              ),
-                            ),
-                        focusedBorder:
-                            OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.green,
-                              ),
-                            ),
-                      ),
-                      dropdownColor: Colors.grey[800],
-                      style: const TextStyle(
-                        color: Colors.white,
-                      ),
-                      menuMaxHeight: 300,
-                      alignment: Alignment.bottomCenter,
-                      items:
-                          List.generate(
-                                12,
-                                (index) => index + 1,
-                              )
-                              .map(
-                                (
-                                  month,
-                                ) => DropdownMenuItem(
-                                  value: month,
-                                  child: Text(
-                                    _getMonthName(month),
-                                    style:
-                                        const TextStyle(
+                          menuMaxHeight: 300,
+                          alignment:
+                              Alignment.bottomCenter,
+                          items:
+                              List.generate(
+                                    12,
+                                    (index) => index + 1,
+                                  )
+                                  .map(
+                                    (
+                                      month,
+                                    ) => DropdownMenuItem(
+                                      value: month,
+                                      child: Text(
+                                        _getMonthName(
+                                          month,
+                                        ),
+                                        style: const TextStyle(
                                           color:
                                               Colors
                                                   .white,
                                         ),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (value) async {
+                            if (value != null) {
+                              setState(
+                                () =>
+                                    _selectedMonth =
+                                        value,
+                              );
+                              await _loadCurrentBudget();
+                            }
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: DropdownButtonFormField<
+                          int
+                        >(
+                          value: _selectedYear,
+                          decoration: const InputDecoration(
+                            labelText: 'Year',
+                            border: OutlineInputBorder(),
+                            labelStyle: TextStyle(
+                              color: Colors.white70,
+                            ),
+                            enabledBorder:
+                                OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey,
                                   ),
                                 ),
-                              )
-                              .toList(),
-                      onChanged: (value) async {
-                        if (value != null) {
-                          setState(
-                            () => _selectedMonth = value,
-                          );
-                          await _loadCurrentBudget();
-                        }
-                      },
-                    ),
+                            focusedBorder:
+                                OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.green,
+                                  ),
+                                ),
+                          ),
+                          dropdownColor:
+                              Colors.grey[800],
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                          menuMaxHeight: 300,
+                          alignment:
+                              Alignment.bottomCenter,
+                          items:
+                              _years
+                                  .map(
+                                    (
+                                      year,
+                                    ) => DropdownMenuItem(
+                                      value: year,
+                                      child: Text(
+                                        year.toString(),
+                                        style: const TextStyle(
+                                          color:
+                                              Colors
+                                                  .white,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (value) async {
+                            if (value != null) {
+                              setState(
+                                () =>
+                                    _selectedYear =
+                                        value,
+                              );
+                              await _loadCurrentBudget();
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: DropdownButtonFormField<int>(
-                      value: _selectedYear,
-                      decoration: const InputDecoration(
-                        labelText: 'Year',
-                        border: OutlineInputBorder(),
-                        labelStyle: TextStyle(
-                          color: Colors.white70,
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green[800],
+                      minimumSize: const Size(
+                        double.infinity,
+                        50,
+                      ),
+                    ),
+                    onPressed: () async {
+                      if (_formKey.currentState!
+                          .validate()) {
+                        final amount = double.parse(
+                          _budgetCtrl.text.replaceAll(
+                            ',',
+                            '.',
+                          ),
+                        );
+                        await ref
+                            .read(
+                              budgetProvider.notifier,
+                            )
+                            .setBudget(
+                              amount,
+                              _selectedCurrency,
+                              _selectedMonth,
+                              _selectedYear,
+                            );
+
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Budget for ${_getMonthName(_selectedMonth)} $_selectedYear set to ${amount.toStringAsFixed(2)} ${_selectedCurrency.code}',
+                            ),
+                            duration: const Duration(
+                              seconds: 3,
+                            ),
+                          ),
+                        );
+
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 12,
+                      ),
+                      child: Text(
+                        'Save Budget',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
                         ),
-                        enabledBorder:
-                            OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey,
-                              ),
-                            ),
-                        focusedBorder:
-                            OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.green,
-                              ),
-                            ),
                       ),
-                      dropdownColor: Colors.grey[800],
-                      style: const TextStyle(
-                        color: Colors.white,
-                      ),
-                      menuMaxHeight: 300,
-                      alignment: Alignment.bottomCenter,
-                      items:
-                          _years
-                              .map(
-                                (
-                                  year,
-                                ) => DropdownMenuItem(
-                                  value: year,
-                                  child: Text(
-                                    year.toString(),
-                                    style:
-                                        const TextStyle(
-                                          color:
-                                              Colors
-                                                  .white,
-                                        ),
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                      onChanged: (value) async {
-                        if (value != null) {
-                          setState(
-                            () => _selectedYear = value,
-                          );
-                          await _loadCurrentBudget();
-                        }
-                      },
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[800],
-                  minimumSize: const Size(
-                    double.infinity,
-                    50,
-                  ),
-                ),
-                onPressed: () async {
-                  if (_formKey.currentState!
-                      .validate()) {
-                    final amount = double.parse(
-                      _budgetCtrl.text.replaceAll(
-                        ',',
-                        '.',
-                      ),
-                    );
-                    await ref
-                        .read(budgetProvider.notifier)
-                        .setBudget(
-                          amount,
-                          _selectedCurrency,
-                          _selectedMonth,
-                          _selectedYear,
-                        );
-
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Budget for ${_getMonthName(_selectedMonth)} $_selectedYear set to ${amount.toStringAsFixed(2)} ${_selectedCurrency.code}',
-                        ),
-                        duration: const Duration(
-                          seconds: 3,
-                        ),
-                      ),
-                    );
-
-                    Navigator.pop(context);
-                  }
-                },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 12,
-                  ),
-                  child: Text(
-                    'Save Budget',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

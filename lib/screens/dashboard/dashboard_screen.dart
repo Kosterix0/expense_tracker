@@ -373,76 +373,90 @@ class _DashboardScreenState
           Tab(text: 'Incomes'),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    setState(() {
-                      _selectedDate = DateTime(
-                        _selectedDate.year,
-                        _selectedDate.month - 1,
-                      );
-                    });
-                    _loadBudgetForSelectedMonth();
-                  },
-                ),
-                TextButton(
-                  onPressed: () => _selectDate(context),
-                  child: Text(
-                    _monthFormat.format(_selectedDate),
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.arrow_forward),
-                  onPressed: () {
-                    setState(() {
-                      _selectedDate = DateTime(
-                        _selectedDate.year,
-                        _selectedDate.month + 1,
-                      );
-                    });
-                    _loadBudgetForSelectedMonth();
-                  },
-                ),
-              ],
-            ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: 1200,
           ),
-          if (_currentMonthBudget != null &&
-              _currentMonthBudget!.isSet)
-            _buildBudgetCard(
-              _currentMonthBudget!,
-              totalExpenses,
-            )
-          else
-            _buildNoBudgetCard(),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildTabContent(
-                  expenses,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: () {
+                        setState(() {
+                          _selectedDate = DateTime(
+                            _selectedDate.year,
+                            _selectedDate.month - 1,
+                          );
+                        });
+                        _loadBudgetForSelectedMonth();
+                      },
+                    ),
+                    TextButton(
+                      onPressed:
+                          () => _selectDate(context),
+                      child: Text(
+                        _monthFormat.format(
+                          _selectedDate,
+                        ),
+                        style: const TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.arrow_forward,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _selectedDate = DateTime(
+                            _selectedDate.year,
+                            _selectedDate.month + 1,
+                          );
+                        });
+                        _loadBudgetForSelectedMonth();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              if (_currentMonthBudget != null &&
+                  _currentMonthBudget!.isSet)
+                _buildBudgetCard(
+                  _currentMonthBudget!,
                   totalExpenses,
-                  'Expenses',
-                  _currentMonthBudget,
+                )
+              else
+                _buildNoBudgetCard(),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildTabContent(
+                      expenses,
+                      totalExpenses,
+                      'Expenses',
+                      _currentMonthBudget,
+                    ),
+                    _buildTabContent(
+                      incomes,
+                      totalIncomes,
+                      'Incomes',
+                      _currentMonthBudget,
+                    ),
+                  ],
                 ),
-                _buildTabContent(
-                  incomes,
-                  totalIncomes,
-                  'Incomes',
-                  _currentMonthBudget,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -470,39 +484,42 @@ class _DashboardScreenState
       padding: const EdgeInsets.symmetric(
         horizontal: 16,
       ),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            children: [
-              Text(
-                'Budget: ${budget.amount.toStringAsFixed(2)} ${budget.currency.code}',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600),
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: [
+                Text(
+                  'Budget: ${budget.amount.toStringAsFixed(2)} ${budget.currency.code}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              LinearProgressIndicator(
-                value: totalExpenses / budget.amount,
-                backgroundColor: Colors.grey[200],
-                color:
-                    totalExpenses > budget.amount
-                        ? Colors.red
-                        : Colors.green,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Remaining: ${remainingBudget.toStringAsFixed(2)} ${budget.currency.code}',
-                style: TextStyle(
-                  fontSize: 14,
+                const SizedBox(height: 8),
+                LinearProgressIndicator(
+                  value: totalExpenses / budget.amount,
+                  backgroundColor: Colors.grey[200],
                   color:
-                      remainingBudget < 0
+                      totalExpenses > budget.amount
                           ? Colors.red
                           : Colors.green,
                 ),
-              ),
-            ],
+                const SizedBox(height: 8),
+                Text(
+                  'Remaining: ${remainingBudget.toStringAsFixed(2)} ${budget.currency.code}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color:
+                        remainingBudget < 0
+                            ? Colors.red
+                            : Colors.green,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -514,34 +531,41 @@ class _DashboardScreenState
       padding: const EdgeInsets.symmetric(
         horizontal: 16,
       ),
-      child: Card(
-        color: Colors.orange[50],
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            children: [
-              const Text(
-                'No budget set for this month.',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600),
+        child: Card(
+          color: Colors.orange[50],
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: [
+                const Text(
+                  'No budget set for this month.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (_) => const SettingsScreen(),
-                    ),
-                  );
-                },
-                child: const Text('Set Budget'),
-              ),
-            ],
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: 200,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) =>
+                                  const SettingsScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text('Set Budget'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -568,57 +592,67 @@ class _DashboardScreenState
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Text(
-                    'Total $title: ${totalAmount.toStringAsFixed(2)} ${budget?.currency.code ?? 'PLN'}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (title == 'Expenses' &&
-                      budget != null &&
-                      budget.isSet)
-                    Column(
-                      children: [
-                        const SizedBox(height: 12),
-                        Text(
-                          'Balance: ${(budget.amount - totalAmount).toStringAsFixed(2)} ${budget.currency.code}',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color:
-                                (budget.amount -
-                                            totalAmount) <
-                                        0
-                                    ? Colors.red
-                                    : Colors.green,
-                          ),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: 1000,
+          ),
+          child: Column(
+            children: [
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Total $title: ${totalAmount.toStringAsFixed(2)} ${budget?.currency.code ?? 'PLN'}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
-                    ),
-                ],
+                      ),
+                      if (title == 'Expenses' &&
+                          budget != null &&
+                          budget.isSet)
+                        Column(
+                          children: [
+                            const SizedBox(height: 12),
+                            Text(
+                              'Balance: ${(budget.amount - totalAmount).toStringAsFixed(2)} ${budget.currency.code}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color:
+                                    (budget.amount -
+                                                totalAmount) <
+                                            0
+                                        ? Colors.red
+                                        : Colors.green,
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(height: 24),
+              _buildPieChart(
+                sums,
+                'Distribution of $title by Category',
+              ),
+              const SizedBox(height: 24),
+              _buildLineChart(
+                transactions,
+                '$title Trend',
+              ),
+              const SizedBox(height: 24),
+              _buildBarChart(
+                sums,
+                'Comparison of $title across Categories',
+              ),
+            ],
           ),
-          const SizedBox(height: 24),
-          _buildPieChart(
-            sums,
-            'Distribution of $title by Category',
-          ),
-          const SizedBox(height: 24),
-          _buildLineChart(transactions, '$title Trend'),
-          const SizedBox(height: 24),
-          _buildBarChart(
-            sums,
-            'Comparison of $title across Categories',
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -627,76 +661,81 @@ class _DashboardScreenState
     Map<Category, double> sums,
     String title,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 600),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-        ),
-        SizedBox(
-          height: 250,
-          child: PieChart(
-            PieChartData(
-              sections:
-                  sums.entries.map((ent) {
-                    final color =
-                        Colors.primaries[ent.key.index %
-                            Colors.primaries.length];
-                    return PieChartSectionData(
-                      color: color,
-                      value: ent.value,
-                      title: '',
-                      radius: 60,
-                    );
-                  }).toList(),
-              centerSpaceRadius: 40,
-              sectionsSpace: 2,
+          SizedBox(
+            height: 250,
+            child: PieChart(
+              PieChartData(
+                sections:
+                    sums.entries.map((ent) {
+                      final color =
+                          Colors.primaries[ent
+                                  .key
+                                  .index %
+                              Colors.primaries.length];
+                      return PieChartSectionData(
+                        color: color,
+                        value: ent.value,
+                        title: '',
+                        radius: 60,
+                      );
+                    }).toList(),
+                centerSpaceRadius: 40,
+                sectionsSpace: 2,
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 16),
-        Wrap(
-          spacing: 8,
-          runSpacing: 4,
-          children:
-              sums.entries.map((entry) {
-                final color =
-                    Colors.primaries[entry.key.index %
-                        Colors.primaries.length];
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 16,
-                      height: 16,
-                      color: color,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      entry.key.displayName,
-                      style: const TextStyle(
-                        fontSize: 12,
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children:
+                sums.entries.map((entry) {
+                  final color =
+                      Colors.primaries[entry.key.index %
+                          Colors.primaries.length];
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 16,
+                        height: 16,
+                        color: color,
                       ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '(${entry.value.toStringAsFixed(2)} ${_currentMonthBudget?.currency.code ?? 'PLN'})',
-                      style: const TextStyle(
-                        fontSize: 12,
+                      const SizedBox(width: 4),
+                      Text(
+                        entry.key.displayName,
+                        style: const TextStyle(
+                          fontSize: 12,
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              }).toList(),
-        ),
-      ],
+                      const SizedBox(width: 4),
+                      Text(
+                        '(${entry.value.toStringAsFixed(2)} ${_currentMonthBudget?.currency.code ?? 'PLN'})',
+                        style: const TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  );
+                }).toList(),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:expense_tracker/services/export_service.dart'; // Dodaj ten import
+import 'package:expense_tracker/services/export_service.dart';
 import 'package:expense_tracker/services/expense_service.dart';
 import 'package:expense_tracker/app.dart';
 import 'package:intl/intl.dart';
@@ -112,85 +112,98 @@ class _ExportScreenState
   Widget build(BuildContext context) {
     return AppScaffold(
       title: 'Export Data',
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Select date range to export:',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: 600,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
               children: [
-                const Text('From:'),
-                const SizedBox(width: 16),
-                TextButton(
-                  onPressed:
-                      () => _selectStartDate(context),
-                  child: Text(
-                    DateFormat(
-                      'dd.MM.yyyy',
-                    ).format(_startDate),
+                const Text(
+                  'Select date range to export:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Spacer(),
-                const Text('To:'),
-                const SizedBox(width: 16),
-                TextButton(
-                  onPressed:
-                      () => _selectEndDate(context),
-                  child: Text(
-                    DateFormat(
-                      'dd.MM.yyyy',
-                    ).format(_endDate),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    const Text('From:'),
+                    const SizedBox(width: 16),
+                    TextButton(
+                      onPressed:
+                          () =>
+                              _selectStartDate(context),
+                      child: Text(
+                        DateFormat(
+                          'dd.MM.yyyy',
+                        ).format(_startDate),
+                      ),
+                    ),
+                    const Spacer(),
+                    const Text('To:'),
+                    const SizedBox(width: 16),
+                    TextButton(
+                      onPressed:
+                          () => _selectEndDate(context),
+                      child: Text(
+                        DateFormat(
+                          'dd.MM.yyyy',
+                        ).format(_endDate),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 32),
+                const Text(
+                  'Select export format:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton.icon(
+                      icon: const Icon(
+                        Icons.picture_as_pdf,
+                      ),
+                      label: const Text('PDF'),
+                      onPressed:
+                          _isExporting
+                              ? null
+                              : () => _exportData('pdf'),
+                    ),
+                    ElevatedButton.icon(
+                      icon: const Icon(
+                        Icons.table_chart,
+                      ),
+                      label: const Text('CSV'),
+                      onPressed:
+                          _isExporting
+                              ? null
+                              : () => _exportData('csv'),
+                    ),
+                  ],
+                ),
+                if (_isExporting)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
               ],
             ),
-            const SizedBox(height: 32),
-            const Text(
-              'Select export format:',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.picture_as_pdf),
-                  label: const Text('PDF'),
-                  onPressed:
-                      _isExporting
-                          ? null
-                          : () => _exportData('pdf'),
-                ),
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.table_chart),
-                  label: const Text('CSV'),
-                  onPressed:
-                      _isExporting
-                          ? null
-                          : () => _exportData('csv'),
-                ),
-              ],
-            ),
-            if (_isExporting)
-              const Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-          ],
+          ),
         ),
       ),
     );

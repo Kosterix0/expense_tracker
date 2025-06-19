@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Expense Tracker',
       theme: ThemeData.dark().copyWith(
         primaryColor: Colors.green[600],
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
         scaffoldBackgroundColor: Colors.grey[900],
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           color: Colors.grey[850],
           elevation: 2,
           margin: const EdgeInsets.all(8),

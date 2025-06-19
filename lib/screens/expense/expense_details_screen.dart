@@ -37,7 +37,14 @@ class ExpenseDetailScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: _buildDetailsView(context, ref),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: 600,
+          ),
+          child: _buildDetailsView(context, ref),
+        ),
+      ),
     );
   }
 
@@ -99,66 +106,69 @@ class ExpenseDetailScreen extends ConsumerWidget {
                 : 'No description',
           ),
           const Spacer(),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.delete),
-            label: const Text(
-              'Delete Transaction',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.delete),
+              label: const Text(
+                'Delete Transaction',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
               ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red[800],
-              minimumSize: const Size(
-                double.infinity,
-                50,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red[800],
+                minimumSize: const Size(
+                  double.infinity,
+                  50,
+                ),
               ),
-            ),
-            onPressed: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder:
-                    (ctx) => AlertDialog(
-                      title: const Text(
-                        'Confirm Delete',
-                      ),
-                      content: const Text(
-                        'Are you sure you want to delete this transaction?',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed:
-                              () => Navigator.pop(
-                                ctx,
-                                false,
-                              ),
-                          child: const Text('Cancel'),
+              onPressed: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder:
+                      (ctx) => AlertDialog(
+                        title: const Text(
+                          'Confirm Delete',
                         ),
-                        TextButton(
-                          onPressed:
-                              () => Navigator.pop(
-                                ctx,
-                                true,
+                        content: const Text(
+                          'Are you sure you want to delete this transaction?',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed:
+                                () => Navigator.pop(
+                                  ctx,
+                                  false,
+                                ),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed:
+                                () => Navigator.pop(
+                                  ctx,
+                                  true,
+                                ),
+                            child: const Text(
+                              'Delete',
+                              style: TextStyle(
+                                color: Colors.red,
                               ),
-                          child: const Text(
-                            'Delete',
-                            style: TextStyle(
-                              color: Colors.red,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-              );
+                        ],
+                      ),
+                );
 
-              if (confirm == true) {
-                await ref
-                    .read(transactionProvider.notifier)
-                    .deleteExpense(expense.id);
-                Navigator.pop(context);
-              }
-            },
+                if (confirm == true) {
+                  await ref
+                      .read(transactionProvider.notifier)
+                      .deleteExpense(expense.id);
+                  Navigator.pop(context);
+                }
+              },
+            ),
           ),
         ],
       ),
