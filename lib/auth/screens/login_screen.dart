@@ -1,4 +1,3 @@
-// login_screen.dart
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/screens/dashboard/dashboard_screen.dart';
@@ -18,10 +17,8 @@ class SignInScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: ConstrainedBox(
             constraints: const BoxConstraints(
-              maxWidth:
-                  500, // Ograniczenie maksymalnej szerokości
-              minHeight:
-                  500, // Minimalna wysokość dla lepszego wyglądu
+              maxWidth: 500,
+              minHeight: 500,
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(
