@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:expense_tracker/widgets/app_drawer.dart';
-import 'package:expense_tracker/services/expense_service.dart';
-import 'package:expense_tracker/services/budget_service.dart';
-import 'package:expense_tracker/domain/expense_state.dart';
-import 'package:expense_tracker/domain/currency.dart';
+
 
 class AppScaffold extends ConsumerWidget {
   final Widget body;

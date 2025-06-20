@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:csv/csv.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,8 +9,9 @@ import 'package:expense_tracker/domain/budget_state.dart';
 import 'package:expense_tracker/domain/currency.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:pdf/widgets.dart';
 import 'package:universal_html/html.dart'
-    show Blob, Url, AnchorElement;
+    show Blob, Url;
 
 class ExportService {
   static Future<Uint8List> _generatePdfBytes({
@@ -81,7 +81,7 @@ class ExportService {
                 level: 1,
                 child: pw.Text('Summary'),
               ),
-              pw.Table.fromTextArray(
+              TableHelper.fromTextArray(
                 context: context,
                 data: [
                   ['Type', 'Amount'],
@@ -105,7 +105,7 @@ class ExportService {
                 level: 1,
                 child: pw.Text('Expenses by Category'),
               ),
-              pw.Table.fromTextArray(
+              TableHelper.fromTextArray(
                 context: context,
                 data: [
                   ['Category', 'Amount', 'Percentage'],
@@ -123,7 +123,7 @@ class ExportService {
                 level: 1,
                 child: pw.Text('Incomes by Category'),
               ),
-              pw.Table.fromTextArray(
+              TableHelper.fromTextArray(
                 context: context,
                 data: [
                   ['Category', 'Amount', 'Percentage'],
@@ -141,7 +141,7 @@ class ExportService {
                 level: 1,
                 child: pw.Text('Transaction List'),
               ),
-              pw.Table.fromTextArray(
+              TableHelper.fromTextArray(
                 context: context,
                 data: [
                   [
@@ -403,10 +403,7 @@ class ExportService {
   ) {
     final blob = Blob([bytes]);
     final url = Url.createObjectUrlFromBlob(blob);
-    final anchor =
-        AnchorElement(href: url)
-          ..setAttribute('download', fileName)
-          ..click();
+
     Url.revokeObjectUrl(url);
   }
 

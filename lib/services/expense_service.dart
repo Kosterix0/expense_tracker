@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:expense_tracker/domain/expense_state.dart';
 import 'package:expense_tracker/domain/currency.dart';
 import 'package:expense_tracker/services/currency_service.dart';
-import 'package:expense_tracker/services/budget_service.dart';
 import 'package:expense_tracker/domain/budget_state.dart';
 
 class ExpenseNotifier

@@ -32,6 +32,6 @@ class CurrencyService {
     final fromRate = await getExchangeRate(from);
     final toRate = await getExchangeRate(to);
 
-    return (amount / fromRate) / toRate;
+    return (amount * fromRate) / toRate;
   }
 }

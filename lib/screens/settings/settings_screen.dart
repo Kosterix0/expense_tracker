@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:expense_tracker/services/budget_service.dart';
 import 'package:expense_tracker/app.dart';
 import 'package:expense_tracker/domain/currency.dart';
-import 'package:expense_tracker/domain/budget_state.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
